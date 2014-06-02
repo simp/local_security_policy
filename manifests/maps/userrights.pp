@@ -5,11 +5,6 @@ class local_security_policy::maps::userrights {
       name => 'SeInteractiveLogonRight',
       type => 'Privilege Rights',
     },
-    'registry type policy' => {
-      name         => 'machinename1',
-      type         => 'registry',
-      registrytype => '4',
-    },
   }
 
 }

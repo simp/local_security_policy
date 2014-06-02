@@ -41,8 +41,6 @@ $SecFileInfText = '[Unicode]
 signature="$CHICAGO$"
 Revision=1'
 
-#write $SecFileInfText
-
 $SecFileInfText >> $SecFileInf
 
 secedit /configure /db $SecFileSdb /cfg $SecFileInf /quiet

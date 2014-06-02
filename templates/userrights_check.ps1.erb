@@ -1,17 +1,26 @@
-$file = "secbackup.inf"
+$DEBUG = $false
 $DEBUGFILE = "c:\test.txt"
+
+If ($DEBUG) {
 echo "Start..." >> $DEBUGFILE
+}
+
+$file = "secbackup.inf"
 secedit /export /cfg $file /quiet
 
 $Policy = "<%= @mapping['name'] %>"
 $Lookup_Users = @()
 <% @setting.each do |mapUser| -%>
-	#echo "Adding User: <%= mapUser %>" >> $DEBUGFILE
+If ($DEBUG) {
+	echo "Adding User: <%= mapUser %>" >> $DEBUGFILE
+}
 	$Lookup_Users += "<%= mapUser %>"
 <% end -%>	
 
-#echo "Policy: $Policy" >> $DEBUGFILE
-cho "Lookup Users: $Lookup_Users" >> $DEBUGFILE
+If ($DEBUG) {
+	echo "Policy: $Policy" >> $DEBUGFILE
+	echo "Lookup Users: $Lookup_Users" >> $DEBUGFILE
+}
 
 $Users = wmic useraccount get "name,sid" /format:csv
 $Groups = wmic group get "name,sid" /format:csv
@@ -34,11 +43,6 @@ $PrivString = ""
 foreach ($lookup in $Lookup_Users) {
 	$Where = [array]::IndexOf($Name, $lookup)
 	$Lookup_Sids += $Sid[$Where]
-#	if ($PrivString -eq "") {
-#		$PrivString = "*" + $Sid[$Where]
-#	} else {
-#		$PrivString += ",*" + $Sid[$Where]
-#	}
 }
 
 
@@ -48,19 +52,25 @@ $PrivSettingLine = $PrivLine -split "= "
 $PrivSetting = $PrivSettingLine[1].trim() -split ","
 
 if ($Lookup_Users.Count -ne $PrivSetting.Count) {
-	#echo "Number of Users Different" >> $DEBUGFILE
+	If ($DEBUG) {
+		echo "Number of Users Different" >> $DEBUGFILE
+	}
 	exit 1
 }
 
 foreach ($Sid in $Lookup_Sids) {
 	$SidIndex = [array]::IndexOf($PrivSetting,"*"+$Sid)
 	if ($SidIndex -eq -1) {
-		#echo "Can't Find User" >> $DEBUGFILE
+	If ($DEBUG) {
+		echo "Can't Find User" >> $DEBUGFILE
+	}
 		exit 1
 	}	
 }
 
-#echo "Exact Match" >> $DEBUGFILE
+If ($DEBUG) {
+	echo "Exact Match" >> $DEBUGFILE
+}
 exit 0
 
 del $file
