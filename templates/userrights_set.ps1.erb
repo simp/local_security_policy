@@ -1,0 +1,48 @@
+$SecFileInf = "secimport.inf"
+$SecFileSdb = "secimport.sdb"
+
+$Policy = <%= @mapping['name'] %>
+$Lookup_Users = @(<%= @settings %>)
+
+$Users = wmic useraccount get "name,sid" /format:csv
+$Groups = wmic group get "name,sid" /format:csv
+$AllAccounts = $Users + $Groups
+
+$Name = @("")
+$Sid = @("")
+
+foreach ($line in $AllAccounts)
+{
+	if ($line.trim() -ne "") {
+		$tmpline = $line.trim() -split "," 
+		$Name += $tmpline[1]
+		$Sid += $tmpline[2]
+	}
+}
+
+$Lookup_Sids = @()
+$PrivString = ""
+foreach ($lookup in $Lookup_Users) {
+	$Where = [array]::IndexOf($Name, $lookup)
+	if ($PrivString -eq "") {
+		$PrivString = "*" + $Sid[$Where]
+	} else {
+		$PrivString += ",*" + $Sid[$Where]
+	}
+}
+
+$SecFileInfText = '[Unicode]
+[Privilege Rights]
+' + $Policy +' = ' + $PrivString + '
+[Version]
+signature="$CHICAGO$"
+Revision=1'
+
+#write $SecFileInfText
+
+$SecFileInfText >> $SecFileInf
+
+secedit /configure /db $SecFileSdb /cfg $SecFileInf /quiet
+
+del $SecFileSdb
+del $SecFileInf

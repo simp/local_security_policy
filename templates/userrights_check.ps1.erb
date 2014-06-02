@@ -1,0 +1,62 @@
+$file = "secbackup.inf"
+$DEBUGFILE = "c:\test.txt"
+echo "Start..." >> $DEBUGFILE
+secedit /export /cfg $file /quiet
+
+$Policy = <%= @mapping['name'] %>
+$Lookup_Users = @(<%= @setting %>)
+
+echo "Policy: $Policy" >> $DEBUGFILE
+echo "Lookup Users: $Lookup_Users" >> $DEBUGFILE
+
+$Users = wmic useraccount get "name,sid" /format:csv
+$Groups = wmic group get "name,sid" /format:csv
+$AllAccounts = $Users + $Groups
+
+$Name = @("")
+$Sid = @("")
+
+foreach ($line in $AllAccounts)
+{
+	if ($line.trim() -ne "") {
+		$tmpline = $line.trim() -split "," 
+		$Name += $tmpline[1]
+		$Sid += $tmpline[2]
+	}
+}
+
+$Lookup_Sids = @()
+$PrivString = ""
+foreach ($lookup in $Lookup_Users) {
+	$Where = [array]::IndexOf($Name, $lookup)
+	$Lookup_Sids += $Sid[$Where]
+#	if ($PrivString -eq "") {
+#		$PrivString = "*" + $Sid[$Where]
+#	} else {
+#		$PrivString += ",*" + $Sid[$Where]
+#	}
+}
+
+
+#write $PrivString
+$PrivLine = Select-String -Simple "$Policy" $file 
+$PrivSettingLine = $PrivLine -split "= "
+$PrivSetting = $PrivSettingLine[1].trim() -split ","
+
+if ($Lookup_Users.Count -ne $PrivSetting.Count) {
+	echo "Number of Users Different" >> $DEBUGFILE
+	exit 1
+}
+
+foreach ($Sid in $Lookup_Sids) {
+	$SidIndex = [array]::IndexOf($PrivSetting,"*"+$Sid)
+	if ($SidIndex -eq -1) {
+		echo "Can't Find User" >> $DEBUGFILE
+		exit 1
+	}	
+}
+
+echo "Exact Match" >> $DEBUGFILE
+exit 0
+
+del $file
