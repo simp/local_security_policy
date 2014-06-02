@@ -11,7 +11,7 @@ define local_security_policy::userrights (
 
   $policyname = $mapping['name']
 
-  notify {"Policy: ${policyname}":}
+  #notify {"Policy: ${policyname}":}
   ## Template uses:
   #   - $mapping
   #   - $setting

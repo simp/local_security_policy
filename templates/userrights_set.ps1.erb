@@ -1,8 +1,11 @@
 $SecFileInf = "secimport.inf"
 $SecFileSdb = "secimport.sdb"
 
-$Policy = <%= @mapping['name'] %>
-$Lookup_Users = @(<%= @settings %>)
+$Policy = "<%= @mapping['name'] %>"
+$Lookup_Users = @()
+<% @setting.each do |mapUser| -%>
+        $Lookup_Users += "<%= mapUser %>"
+<% end -%>
 
 $Users = wmic useraccount get "name,sid" /format:csv
 $Groups = wmic group get "name,sid" /format:csv

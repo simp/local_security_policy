@@ -3,11 +3,15 @@ $DEBUGFILE = "c:\test.txt"
 echo "Start..." >> $DEBUGFILE
 secedit /export /cfg $file /quiet
 
-$Policy = <%= @mapping['name'] %>
-$Lookup_Users = @(<%= @setting %>)
+$Policy = "<%= @mapping['name'] %>"
+$Lookup_Users = @()
+<% @setting.each do |mapUser| -%>
+	#echo "Adding User: <%= mapUser %>" >> $DEBUGFILE
+	$Lookup_Users += "<%= mapUser %>"
+<% end -%>	
 
-echo "Policy: $Policy" >> $DEBUGFILE
-echo "Lookup Users: $Lookup_Users" >> $DEBUGFILE
+#echo "Policy: $Policy" >> $DEBUGFILE
+cho "Lookup Users: $Lookup_Users" >> $DEBUGFILE
 
 $Users = wmic useraccount get "name,sid" /format:csv
 $Groups = wmic group get "name,sid" /format:csv
@@ -44,19 +48,19 @@ $PrivSettingLine = $PrivLine -split "= "
 $PrivSetting = $PrivSettingLine[1].trim() -split ","
 
 if ($Lookup_Users.Count -ne $PrivSetting.Count) {
-	echo "Number of Users Different" >> $DEBUGFILE
+	#echo "Number of Users Different" >> $DEBUGFILE
 	exit 1
 }
 
 foreach ($Sid in $Lookup_Sids) {
 	$SidIndex = [array]::IndexOf($PrivSetting,"*"+$Sid)
 	if ($SidIndex -eq -1) {
-		echo "Can't Find User" >> $DEBUGFILE
+		#echo "Can't Find User" >> $DEBUGFILE
 		exit 1
 	}	
 }
 
-echo "Exact Match" >> $DEBUGFILE
+#echo "Exact Match" >> $DEBUGFILE
 exit 0
 
 del $file
