@@ -1,0 +1,42 @@
+$DEBUG = $false
+$DEBUGFILE = "c:\auditpolicy_test.txt"
+
+If ($DEBUG) {
+	echo "Start Set Procedure..." >> $DEBUGFILE
+}
+
+$SecFileInf = "secimport.inf"
+$SecFileSdb = "secimport.sdb"
+
+$Policy = "<%= @mapping['name'] %>"
+$PolSetting = 0
+<% @setting.each do |x| %>
+        <% if x == 'Success' -%>
+                $PolSetting += 1
+        <% elsif x == 'Failure' %>
+                $PolSetting += 2
+        <% end -%>
+<% end -%>
+
+If ($DEBUG) {
+	echo "Policy: $Policy" >> $DEBUGFILE
+	echo "Setting: $PolSetting" >> $DEBUGFILE
+}
+
+If ($DEBUG) 
+{
+	echo "Setting Policy: $Policy  Setting: $PolSetting" >> $DEBUGFILE
+}
+$SecFileInfText = '[Unicode]
+[Event Audit]
+' + $Policy +' = ' + $PolSetting + '
+[Version]
+signature="$CHICAGO$"
+Revision=1'
+
+$SecFileInfText >> $SecFileInf
+
+secedit /configure /db $SecFileSdb /cfg $SecFileInf /quiet
+
+del $SecFileSdb
+del $SecFileInf

@@ -1,0 +1,43 @@
+$DEBUG = $true
+$DEBUGFILE = "c:\auditpolicy_test.txt"
+
+If ($DEBUG) {
+	echo "Start Audit Policy Check..." >> $DEBUGFILE
+}
+
+$SecInf = "secbackup.inf"
+secedit /export /cfg $SecInf /quiet
+
+$Policy = "<%= @mapping['name'] %>"
+$PolSetting = 0
+<% @setting.each do |x| %>
+	<% if x == 'Success' -%>
+		$PolSetting += 1
+	<% elsif x == 'Failure' %>
+		$PolSetting += 2
+	<% end -%>
+<% end -%>
+	
+
+If ($DEBUG) {
+	echo "Policy: $Policy" >> $DEBUGFILE
+	echo "Setting: $PolSetting" >> $DEBUGFILE
+}
+
+$ActualSettingLine = Select-String -Simple "$Policy" $SecInf 
+$ActualSetting = $ActualSettingLine -split "= "
+
+if ($ActualSetting[1]  -ne $PolSetting) {
+	If ($DEBUG) {
+		echo "Setting is different Actual: $ActualSetting, Desired $PolSetting" >> $DEBUGFILE
+	}
+		exit 1
+	}	
+}
+
+If ($DEBUG) {
+	echo "Setting Exact Match" >> $DEBUGFILE
+}
+exit 0
+
+del $SecInf
