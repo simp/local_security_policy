@@ -1,3 +1,0 @@
-# local_security_policy #
-
-This is the local_security_policy module. It provides...
