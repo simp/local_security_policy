@@ -1,0 +1,1 @@
+include local_security_policy
