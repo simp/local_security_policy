@@ -1,5 +1,5 @@
 name    'cannonps-local_security_policy'
-version '0.3.0'
+version '0.3.1'
 source 'https://github.com/cannonps/local_security_policy'
 author 'Paul Cannon'
 license 'Apached 2.0'

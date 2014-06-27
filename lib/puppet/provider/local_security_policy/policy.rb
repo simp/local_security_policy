@@ -483,6 +483,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
           if ! policy
             policy = "Unknown Policy Mapping: #{policy_setting}"
           end
+          reg_type = ""
           #Address special returns and show human readable strings
           if section_header == "Privilege Rights"
             users =  Array.new
@@ -490,8 +491,23 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
               users << sid_to_user(sid)
             end
             policy_value = users.join(",")
+          elsif section_header == 'Event Audit'
+            case policy_value.to_s
+            when 3
+              policy_value = "Success,Failure"
+            when 2
+              policy_value = "Failure"
+            when 1
+              policy_value = "Success"
+            else
+              policy_value = "No auditing"
+            end
+          elsif section_header == 'Registry Values'
+            pv = policy_value.split(",")
+            reg_type = pv[0]
+            policy_value = pv[1]
           end
-          attributes_hash = {:name => policy, :ensure => :present, :provider => :policy, :policy_type => section_header ,:policy_setting => policy_setting, :policy_value => policy_value }
+          attributes_hash = {:name => policy, :ensure => :present, :provider => :policy, :policy_type => section_header ,:policy_setting => policy_setting, :policy_value => policy_value, :reg_type => reg_type }
           instances << new(attributes_hash)
         end
       end
@@ -553,7 +569,6 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
         end
       end
     end
-    options = []
     if @property_flush
       time = Time.now
       time = time.strftime("%Y%m%d%H%M%S")
@@ -572,6 +587,21 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
           end
         end
         pv = sids.join(",")
+      elsif policy_type == 'Event Audit'
+        if resource[:policy_value] == 'No auditing'
+          pv = 0
+        else
+          pv = 0
+          resource[:policy_value].split(",").split do |ssetting|
+            if setting.strip! == 'Success'
+              pv += 1
+            elsif setting.strip! == 'Failure'
+              pv += 2
+            end
+          end
+        end
+      elsif policy_type == 'Registry Values'
+        pv = @property_hash[:reg_type] + "," + resource[:policy_value].to_s
       else
         pv = resource[:policy_value]
       end
@@ -583,8 +613,8 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
       file.close
       system('secedit','/configure','/db',sdbout, '/cfg',infout,'/quiet')
       #comment this out if you want to debug the import
-      #File.delete(infout)
-      #File.delete(sdbout)
+      File.delete(infout)
+      File.delete(sdbout)
       @property_hash = resource.to_hash
     end
   end
