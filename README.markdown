@@ -20,11 +20,6 @@ This module uses types and providers to list, update, validate settings
 ## Use
 The title and name of the resources is exact match of what is in secedit GUI.  If you are uncertain of the setting name and values just user 'resource' to pipe them all into a file and make adjustments as necessary.
 The block will look like this
-
-
-
-### Listing all settings
-Show all local_security_policy resources available on server
 ```
 local_security_policy { 'Audit account logon events': <- Title / Name
   ensure         => present,              <- Always present
@@ -33,6 +28,10 @@ local_security_policy { 'Audit account logon events': <- Title / Name
   policy_value   => 'Success,Failure',    <- Values
 }
 ```
+
+
+### Listing all settings
+Show all local_security_policy resources available on server
 ```
 puppet resource local_security_policy
 ```
