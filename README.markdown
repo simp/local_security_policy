@@ -5,14 +5,14 @@ create by Paul Cannon at email paulscannon at gmail dot com
 ## Local_security_policy features
 Configure, local security policy (LSP) for windows servers.  
 LSP is key to a baseline configuration of the following security features:
-* Account Policy
-*  Password Policy
-*  Account Lockout Policy
-* Local Policy
-*  Audit Policy
-*  User Rights Assignment
-*  Security Options
-*  Registry Values
+** Account Policy
+*  * Password Policy
+*  * Account Lockout Policy
+** Local Policy
+*  * Audit Policy
+*  * User Rights Assignment
+*  * Security Options
+*  * Registry Values
 
 
 This module uses types and providers to list, update, validate settings
