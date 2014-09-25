@@ -25,12 +25,14 @@ The block will look like this
 
 ### Listing all settings
 Show all local_security_policy resources available on server
+```
 local_security_policy { 'Audit account logon events': <- Title / Name
   ensure         => present,              <- Always present
   policy_setting => "AuditAccountLogon",  <- The secedit file key. Informational purposes only, not for use in manifest definitions
   policy_type    => "Event Audit",        <- The secedit file section, Informational purposes only, not for use in manifest definitions
   policy_value   => 'Success,Failure',    <- Values
 }
+```
 ```
 puppet resource local_security_policy
 ```
@@ -175,4 +177,7 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
       'Network security: All Local System to use computer identiry for NTLM'
       'Network access: Remotely accessible registry paths' 
       
+      
+## TODO: Future release
+* Validate users in active directory are being handled.
  
