@@ -174,3 +174,5 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
       'Accounts: Limit local account use of blank passwords to console logon only' 
       'Network security: All Local System to use computer identiry for NTLM'
       'Network access: Remotely accessible registry paths' 
+      
+ 
