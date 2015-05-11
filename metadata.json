@@ -1,8 +1,8 @@
 {
   "name": "ayohrling-local_security_policy",
   "version": "0.3.2",
-  "author": "Adam Yohrling",
-  "summary": "Local Security Policy Editor",
+  "author": "Paul S. Cannon, Adam Yohrling",
+  "summary": "Windows Local Security Policy management. Forked from cannonps/local_security_policy",
   "license": "Apache 2.0",
   "source": "https://github.com/ayohrling/local_security_policy",
   "project_page": "https://github.com/ayohrling/local_security_policy",
