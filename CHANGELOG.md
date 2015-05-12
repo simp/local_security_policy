@@ -1,4 +1,4 @@
-###[0.3.2] - Adam Yohrling <adam.yohrling@onyxpoint.com>
+###[0.3.2] - Adam Yohrling
  * Added support for currently unset values
  * Removed duplicate and invalid 'initalize' method
  * Cleaned out .DS_Store files that were in the repository
