@@ -1,3 +1,6 @@
+###[0.4.0] - Adam Yohrling
+ * Added support for ensuring Privilege Rights settings as absent
+
 ###[0.3.2] - Adam Yohrling
  * Added support for currently unset values
  * Removed duplicate and invalid 'initalize' method

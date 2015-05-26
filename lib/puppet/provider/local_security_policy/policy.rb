@@ -658,12 +658,16 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
       end
       pv = ""
       if policy_type == 'Privilege Rights'
-        sids = Array.new
-        resource[:policy_value].split(",").sort.each do |suser|
-          suser.strip!
-          sids << self.class.user_to_sid(suser)
+        if @property_flush[:ensure] == :absent
+          pv = ''
+        else
+          sids = Array.new
+          resource[:policy_value].split(",").sort.each do |suser|
+            suser.strip!
+            sids << self.class.user_to_sid(suser)
+          end
+          pv = sids.join(",")
         end
-        pv = sids.join(",")
       elsif policy_type == 'Event Audit'
         if resource[:policy_value] == 'No auditing'
           pv = 0
@@ -690,17 +694,18 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
       file.close
       system('secedit','/configure','/db',sdbout, '/cfg',infout,'/quiet')
       #comment this out if you want to debug the import
-      File.delete(infout)
-      File.delete(sdbout)
+      #File.delete(infout)
+      #File.delete(sdbout)
       @property_hash = resource.to_hash
     end
   end
 
   def create
-    @property_flush[:ensure] == :present
+    @property_flush[:ensure] = :present
   end
 
   def destroy
+    @property_flush[:ensure] = :absent
     #Destroy not an option for now.  LSP Settings should be set to something.
   end
 
