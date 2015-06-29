@@ -410,7 +410,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
             'reg_type' => '4',
             'type' => 'Registry Values',
       },
-      'Network access: let Everyone permissions apply to anonymous users' => {
+      'Network access: Let Everyone permissions apply to anonymous users' => {
           'name' => 'MACHINE\System\CurrentControlSet\Control\Lsa\EveryoneIncludesAnonymous',
             'reg_type' => '4',
             'type' => 'Registry Values',
