@@ -52,7 +52,7 @@ describe provider_class do
   it 'should create instances without error' do
     instances = provider_class.instances
     expect(instances.class).to eq(Array)
-    expect(instances.count).to eq(81)
+    expect(instances.count).to eq(94)
   end
 
   it 'should return builtin accounts' do

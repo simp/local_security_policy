@@ -556,6 +556,151 @@ class SecurityPolicy
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
+            'Devices: Restrict CD-ROM access to locally logged-on user only' => {
+                :name => 'MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon\AllocateCDRoms',
+                :reg_type => '1',
+                :policy_type => 'Registry Values',
+            },
+            'Devices: Restrict floppy access to locally logged-on user only' => {
+                :name => 'MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon\AllocateFloppies',
+                :reg_type => '1',
+                :policy_type => 'Registry Values',
+            },
+            'Devices: Allowed to format and eject removable media' => {
+                :name => 'MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon\AllocateDASD',
+                :reg_type => '1',
+                :policy_type => 'Registry Values',
+            },
+            'Devices: Prevent users from installing printer drivers' => {
+                :name => 'MACHINE\System\Microsoft\Windows\CurrentVersion\Policies\System\UndockWithoutLogon',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Domain member: Digitally encrypt or sign secure channel data (always)' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters\RequireSignOrSeal',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Domain member: Digitally encrypt secure channel data (when possible)' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters\SealSecureChannel',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Domain member: Digitally sign secure channel data (when possible)' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters\SignSecureChannel',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Domain member: Disable machine account password changes' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters\DisablePasswordChange',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Domain member: Maximum machine account password age' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters\MaximumPasswordAge',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Domain member: Require strong (Windows 2000 or later) session key' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters\RequireStrongKey',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Interactive logon: Display user information when the session is locked' => {
+                :name => 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\DontDisplayLockedUserId',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Interactive logon: Machine inactivity limit' => {
+                :name => 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\InactivityTimeoutSecs',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Interactive logon: Machine account lockout threshold' => {
+                :name => 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\MaxDevicePasswordFailedAttempts',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Microsoft network client: Digitally sign communications (always)' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters\RequireSecuritySignature',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Microsoft network client: Microsoft network client: Digitally sign communications (if server agrees)' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters\EnableSecuritySignature',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Microsoft network client: Send unencrypted password to third-party SMB servers' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters\EnablePlainTextPassword',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Microsoft network server: Server SPN target name validation level' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters\SMBServerNameHardeningLevel',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Microsoft network server: Amount of idle time required before suspending session' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters\autodisconnect',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Microsoft network server: Microsoft network server: Digitally sign communications (always)' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters\requiresecuritysignature',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Microsoft network server: Digitally sign communications (if client agrees)' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters\enablesecuritysignature',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Microsoft network server: Disconnect clients when logon hours expire' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters\enableforcedlogoff',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Network access: Named Pipes that can be accessed anonymously' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters\NullSessionPipes',
+                :reg_type => '7',
+                :policy_type => 'Registry Values',
+            },
+            'Network access: Shares that can be accessed anonymously' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters\NullSessionPipes',
+                :reg_type => '7',
+                :policy_type => 'Registry Values',
+            },
+            'Network access: Let Everyone permissions apply to anonymous users' => {
+                :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\EveryoneIncludesAnonymous',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Network access: Do not allow anonymous enumeration of SAM accounts and shares' => {
+                :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\RestrictAnonymous',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Network access: Do not allow anonymous enumeration of SAM accounts' => {
+                :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\RestrictAnonymousSAM',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Network access: Remotely accessible registry paths and sub-paths' => {
+                :name => 'MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths\Machine',
+                :reg_type => '7',
+                :policy_type => 'Registry Values',
+            },
+            'Network access: Remotely accessible registry paths' => {
+                :name => 'MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedExactPaths\Machine',
+                :reg_type => '7',
+                :policy_type => 'Registry Values',
+            },
+            'Network access: Restrict anonymous access to Named Pipes and Shares' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\restrictnullsessaccess',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
         }
     end
 end
