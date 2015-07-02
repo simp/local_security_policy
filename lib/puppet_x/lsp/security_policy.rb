@@ -1,6 +1,59 @@
-class SecurityPolicy
+require 'puppet/provider'
 
-    def self.builtin_accounts
+class SecurityPolicy
+    attr_reader :wmic_cmd
+    def initialize
+        # suppose to make an instance method for wmic
+        @wmic_cmd = Puppet::Provider::CommandDefiner.define('wmic', 'wmic', Puppet::Provider)
+    end
+
+    def wmic(args=[])
+        @wmic_cmd.execute(args).force_encoding('utf-16le').encode('utf-8', :universal_newline => true).gsub("\xEF\xBB\xBF", '')
+    end
+
+    # collect all the local accounts using wmic
+    def local_accounts
+        ary = []
+        ["useraccount","group"].each do |lu|
+            wmic([lu,'get', 'name,sid', '/format:csv']).split("\n").each do |line|
+                next if line =~ /Node/
+                if line.include? ","
+                    ary << line.strip.split(",")
+                end
+            end
+        end
+        ary
+    end
+
+    def user_sid_array
+        @user_sid_array ||= local_accounts + builtin_accounts
+    end
+
+    def user_to_sid(value)
+        sid = user_sid_array.find do |home,user,sid|
+            user == value
+        end
+        unless sid.nil?
+            '*' + sid[2]
+        else
+            value
+        end
+    end
+
+    # convert the sid to a user
+    def sid_to_user(value)
+        value = value.gsub(/(^\*)/ , '')
+        user = user_sid_array.find do |home,user,sid|
+            value == sid
+        end
+        unless user.nil?
+            user[1]
+        else
+            value
+        end
+    end
+
+    def builtin_accounts
         ary = [
             ["","EVERYONE","S-1-1-0"],
             ["","LOCAL","S-1-2-0"],
