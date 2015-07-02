@@ -1,4 +1,4 @@
-require 'tempfile'
+require 'fileutils'
 
 begin
   require "puppet_x/twp/inifile"
@@ -86,13 +86,15 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
   end
 
   # export the policy settings to the specified file and return the filename
-  def self.export_policy_settings(inffile=temp_file)
+  def self.export_policy_settings(inffile=nil)
+    inffile ||= temp_file
     secedit(['/export', '/cfg', inffile, '/quiet'])
     inffile
   end
 
   # export and then read the policy settings from a file into a inifile object
-  def self.read_policy_settings(inffile=temp_file)
+  def self.read_policy_settings(inffile=nil)
+    inffile ||= temp_file
     export_policy_settings(inffile)
     inffile_content = nil
     File.open inffile, 'r:IBM437' do |file|
@@ -122,8 +124,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
                         :policy_value => parameter_value,
                         :reg_type => policy_values[:reg_type])
       rescue KeyError => e
-        # Log message goes here
-        # Puppet::Verbose e.message
+        Puppet.debug e.message
       end
     end
     settings
@@ -146,7 +147,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
       defined_policy.merge!(resource.to_hash)
       write_policy_to_system(defined_policy)
     rescue KeyError => e
-      Puppet.warn e.message
+      Puppet.debug e.message
       # send helpful debug message to user here
     end
   end
@@ -177,7 +178,6 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
     rescue KeyError => e
       Puppet.warn e.message
     end
-
     # we need to compare the hashes, however, the resource hash has a few keys we dont' care about
     # which precludes us from comparing hashes directly so I went ahead a compared almost all the keys manually via
     # conditionals.
@@ -185,7 +185,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
       inst = instance.to_hash
       if inst[:policy_type] == defined_policy[:policy_type] && inst[:name] == defined_policy[:name]
         if inst[:policy_value] == defined_policy[:policy_value] && inst[:policy_setting] == defined_policy[:policy_setting]
-          if inst[:ensure] == defined_policy[:ensure]
+          if inst[:ensure].to_s == defined_policy[:ensure].to_s
             return true
           end
         end
@@ -204,12 +204,13 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
     'c:\\windows\\temp\\secedit.inf'
   end
 
-  private
-
+  def temp_file
+    'c:\\windows\\temp\\secedit.inf'
+  end
 
   def convert_privilege_right(policy_hash)
     # we need to convert users to sids first
-    if policy_hash[:ensure] == :absent
+    if policy_hash[:ensure].to_s == 'absent'
       pv = ''
     else
       sids = Array.new
@@ -224,25 +225,25 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
   # converts the policy has and returns the policy value for audit types
   def convert_audit(policy_hash)
     return policy_hash[:policy_value] if policy_hash[:policy_value].instance_of?(Fixnum)
-    if policy_hash[:policy_value] == 'No auditing'
-      pv = 0
-    else
-      pv = 0
-      policy_hash[:policy_value].split(",").split do |ssetting|
-        if setting.strip! == 'Success'
+    pv = 0
+    policy_hash[:policy_value].split(",").each do |ssetting|
+      case ssetting.strip
+        when 'No auditing'
+          return 0
+        when 'Success'
           pv += 1
-        elsif setting.strip! == 'Failure'
+        when 'Failure'
           pv += 2
-        end
       end
     end
+    pv
   end
 
   def convert_registry_value(policy_hash)
     "#{policy_hash[:reg_type]},#{policy_hash[:policy_value]}"
   end
 
-  # converts the policy value inside the policy hash to confirm to the secedit standards
+  # converts the policy value inside the policy hash to conform to the secedit standards
   def convert_policy_hash(policy_hash)
     case policy_hash[:policy_type]
       when 'Privilege Rights'
@@ -279,10 +280,10 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
       inf.write(:filename => infout, :encoding => 'utf-8')
       secedit(['/configure', '/db', sdbout, '/cfg',infout, '/log', logout])
     ensure
-      File.rm(temp_file)
-      File.rm(infout)
-      File.rm(sdbout)
-      File.rm(logout)
+      FileUtils.rm(temp_file)
+      FileUtils.rm(infout)
+      FileUtils.rm(sdbout)
+      FileUtils.rm(logout)
     end
   end
 
