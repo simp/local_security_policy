@@ -1,6 +1,6 @@
 Puppet::Type.newtype(:local_security_policy) do
-  #confine :operatinsystme => { :windows ]
-  desc 'Pupet type that models the local'
+  #confine :operatingsystem => { :windows ]
+  desc 'Puppet type that models the local'
 
   ensurable
 
@@ -18,6 +18,6 @@ Puppet::Type.newtype(:local_security_policy) do
   end
 
   newproperty(:policy_value) do
-    desc 'Local Security Polciy Setting Value'
+    desc 'Local Security Policy Setting Value'
   end
 end
