@@ -2,7 +2,7 @@ require 'puppet/provider'
 
 class SecurityPolicy
     attr_reader :wmic_cmd
-    EVENT_TYPES = ["Success,Failure", "Success", "Failure", "No Auditing"]
+    EVENT_TYPES = ["Success,Failure", "Success", "Failure", "No Auditing", 0, 1, 2, 3]
 
     def initialize
         # suppose to make an instance method for wmic
@@ -193,8 +193,10 @@ class SecurityPolicy
                 return 2
             when "Success"
                 return 1
-            else
+            when 'No auditing'
                 return 0
+            else
+                return event_audit_name
         end
     end
 
@@ -227,6 +229,8 @@ class SecurityPolicy
     end
 
     def self.convert_registry_value(name, value)
+        value = value.to_s
+        return value if value.split(',').count > 1
         policy_hash = find_mapping_from_policy_desc(name)
         "#{policy_hash[:reg_type]},#{value}"
     end
@@ -511,7 +515,7 @@ class SecurityPolicy
             },
             #Registry Keys
             'Recovery console: Allow automatic adminstrative logon' => {
-                :name => 'MACHINE\Software\Microsoft\Windows MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Setup\RecoveryConsole\SecurityLevel',
+                :name => 'MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Setup\RecoveryConsole\SecurityLevel',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },

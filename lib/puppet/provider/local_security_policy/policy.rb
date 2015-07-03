@@ -55,13 +55,18 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
       next if section == 'Version'
       begin
         policy_desc, policy_values = SecurityPolicy.find_mapping_from_policy_name(parameter_name)
-        settings << new(:name => policy_desc,
-                        :ensure => :present,
-                        :provider => :policy,
-                        :policy_type => section ,
-                        :policy_setting => parameter_name,
-                        :policy_value => parameter_value,
-                        :reg_type => policy_values[:reg_type])
+        policy_hash = {
+            :name => policy_desc,
+            :ensure => :present,
+            :provider => :policy,
+            :policy_type => section ,
+            :policy_setting => parameter_name,
+            :policy_value => parameter_value,
+        }
+        # some of these values need to be converted from machine
+        #policy_hash[:policy_value] = SecurityPolicy.convert_policy_value(policy_hash, parameter_value)
+        inst = Puppet::Type.type(:local_security_policy).new(policy_hash)
+        settings << inst
       rescue KeyError => e
         Puppet.debug e.message
       end
@@ -106,22 +111,13 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
 
   # check if the resource exists on a system already
   def exists?
-    begin
-      defined_policy = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
-      defined_policy.merge!(resource.to_hash)
-    rescue KeyError => e
-      Puppet.warn e.message
-    end
     # we need to compare the hashes, however, the resource hash has a few keys we dont' care about
     # which precludes us from comparing hashes directly so I went ahead a compared almost all the keys manually via
     # conditionals.
-    self.class.instances.each do | instance|
-      inst = instance.to_hash
-      if inst[:policy_type] == defined_policy[:policy_type] && inst[:name] == defined_policy[:name]
-        if inst[:policy_value] == defined_policy[:policy_value] && inst[:policy_setting] == defined_policy[:policy_setting]
-          if inst[:ensure].to_s == defined_policy[:ensure].to_s
-            return true
-          end
+    self.class.instances.each do | inst|
+      if inst[:policy_type] == resource[:policy_type] && inst[:name] == resource[:name]
+        if inst[:policy_value] == resource[:policy_value] && inst[:policy_setting] == resource[:policy_setting]
+          return inst[:ensure].to_s == resource[:ensure].to_s
         end
       end
     end

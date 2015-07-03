@@ -55,6 +55,11 @@ Puppet::Type.newtype(:local_security_policy) do
 
     munge do | value |
       # need to convert policy values to designated types
+      case resource[:policy_type].to_s
+        when 'Registry Values'
+          # secedit values sometimes look like : "1,\"4\""
+          value = value.gsub(/\"/,'')
+      end
       SecurityPolicy.convert_policy_value(resource.to_hash, value)
     end
   end
