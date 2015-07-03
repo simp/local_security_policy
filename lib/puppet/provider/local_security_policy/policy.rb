@@ -24,67 +24,6 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
 
   mk_resource_methods
 
-  # if Puppet.features.microsoft_windows?
-  #   require 'puppet/util/windows'
-  #   include Puppet::Util::Windows::Security
-  # end
-  # # Determine if the account is valid, and if so, return the UID
-  # def name2id(value)
-  #   Puppet::Util::Windows::SID.name_to_sid(value)
-  # end
-  #
-  # # If it's a valid SID, get the name. Otherwise, it's already a name,
-  # # so just return it.
-  # def id2name(id)
-  #   if Puppet::Util::Windows::SID.valid_sid?(id)
-  #     Puppet::Util::Windows::SID.sid_to_name(id)
-  #   else
-  #     id
-  #   end
-  # end
-
-  # returns an array of builtin users and configured local users
-  def self.user_sid_array
-    @user_sid_array ||= local_accounts + SecurityPolicy.builtin_accounts
-  end
-
-  def user_to_sid(value)
-    sid = self.class.user_sid_array.find do |home,user,sid|
-      user == value
-    end
-    unless sid.nil?
-      '*' + sid[2]
-    else
-      value
-    end
-  end
-
-  # convert the sid to a user
-  def sid_to_user(value)
-    value = value.gsub(/(^\*)/ , '')
-    user = self.class.user_sid_array.find do |home,user,sid|
-      value == sid
-    end
-    unless user.nil?
-      user[1]
-    else
-      value
-    end
-  end
-
-  # collect all the local accounts using wmic
-  def self.local_accounts
-    ary = []
-    ["useraccount","group"].each do |lu|
-      wmic([lu,'get', 'name,sid', '/format:csv']).split("\n").each do |line|
-        if line.include? ","
-          ary << line.strip.split(",")
-        end
-      end
-    end
-    ary
-  end
-
   # export the policy settings to the specified file and return the filename
   def self.export_policy_settings(inffile=nil)
     inffile ||= temp_file
@@ -115,7 +54,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
       next if section == 'Unicode'
       next if section == 'Version'
       begin
-        policy_desc, policy_values = SecurityPolicy::find_mapping_from_policy_name(parameter_name)
+        policy_desc, policy_values = SecurityPolicy.find_mapping_from_policy_name(parameter_name)
         settings << new(:name => policy_desc,
                         :ensure => :present,
                         :provider => :policy,
@@ -142,10 +81,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
   # create the resource and convert any user supplied values to computer terms
   def create
     begin
-      defined_policy = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
-      # merging the values here will take any default values form the mapping and the resource will override any values
-      defined_policy.merge!(resource.to_hash)
-      write_policy_to_system(defined_policy)
+      write_policy_to_system(resource.to_hash)
     rescue KeyError => e
       Puppet.debug e.message
       # send helpful debug message to user here
@@ -173,8 +109,6 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
     begin
       defined_policy = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
       defined_policy.merge!(resource.to_hash)
-      # the incoming defined policy is user friends so we need to convert it computer lingo
-      defined_policy = convert_policy_hash(defined_policy)
     rescue KeyError => e
       Puppet.warn e.message
     end
@@ -208,57 +142,6 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
     'c:\\windows\\temp\\secedit.inf'
   end
 
-  def convert_privilege_right(policy_hash)
-    # we need to convert users to sids first
-    if policy_hash[:ensure].to_s == 'absent'
-      pv = ''
-    else
-      sids = Array.new
-      policy_hash[:policy_value].split(",").sort.each do |suser|
-        suser.strip!
-        sids << self.user_to_sid(suser)
-      end
-      pv = sids.join(",")
-    end
-  end
-
-  # converts the policy has and returns the policy value for audit types
-  def convert_audit(policy_hash)
-    return policy_hash[:policy_value] if policy_hash[:policy_value].instance_of?(Fixnum)
-    pv = 0
-    policy_hash[:policy_value].split(",").each do |ssetting|
-      case ssetting.strip
-        when 'No auditing'
-          return 0
-        when 'Success'
-          pv += 1
-        when 'Failure'
-          pv += 2
-      end
-    end
-    pv
-  end
-
-  def convert_registry_value(policy_hash)
-    "#{policy_hash[:reg_type]},#{policy_hash[:policy_value]}"
-  end
-
-  # converts the policy value inside the policy hash to conform to the secedit standards
-  def convert_policy_hash(policy_hash)
-    case policy_hash[:policy_type]
-      when 'Privilege Rights'
-        value = convert_privilege_right(policy_hash)
-      when 'Event Audit'
-        value = convert_audit(policy_hash)
-      when 'Registry Values'
-        value = convert_registry_value(policy_hash)
-      else
-        value = policy_hash[:policy_value]
-    end
-    policy_hash[:policy_value] = value
-    policy_hash
-  end
-
   # writes out one policy at a time using the InfFile Class and secedit
   def write_policy_to_system(policy_hash)
     time = Time.now
@@ -273,7 +156,6 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
       inf["Version"] = {"signature"=>"$CHICAGO$", "Revision"=>1}
       inf["Unicode"] = {"Unicode"=>"yes"}
       section = policy_hash[:policy_type]
-      policy_hash = convert_policy_hash(policy_hash)
       section_value = {policy_hash[:policy_setting] => policy_hash[:policy_value]}
       # we can utilize the IniFile class to write out the data in ini format
       inf[section] = section_value
@@ -286,5 +168,4 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
       FileUtils.rm(logout)
     end
   end
-
 end

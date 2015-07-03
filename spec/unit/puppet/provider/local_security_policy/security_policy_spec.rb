@@ -37,8 +37,8 @@ describe 'SecurityPolicy' do
 
   let(:security_policy){
     SecurityPolicy.new
-
   }
+
   it 'should return builtin accounts' do
     # we just want to check that this is an array within an array that has 3 elements in each element
     expect(security_policy.builtin_accounts.count).to be > 50
@@ -78,4 +78,80 @@ describe 'SecurityPolicy' do
   end
 
 
+  describe 'registry value' do
+    let(:resource) {
+      Puppet::Type.type(:local_security_policy).new(
+          :name => 'Network access: Let Everyone permissions apply to anonymous users',
+          :ensure => 'present',
+          :policy_setting => 'MACHINE\System\CurrentControlSet\Control\Lsa\EveryoneIncludesAnonymous',
+          :policy_type    => 'Registry Values',
+          :policy_value   => '3')
+    }
+    it 'should convert a registry value' do
+      expect(subject.convert_registry_value("Network access: Let Everyone permissions apply to anonymous users",
+                                            3)).to eq('4,3')
+    end
+
+    it 'should convert a policy right' do
+      defined_policy = {
+          :name => 'Network access: Let Everyone permissions apply to anonymous users',
+          :ensure => 'present',
+          :policy_setting => 'MACHINE\System\CurrentControlSet\Control\Lsa\EveryoneIncludesAnonymous',
+          :policy_type    => 'Registry Values',
+          :policy_value   => '3'
+      }
+      hash = security_policy.convert_policy_hash(defined_policy)
+      expect(hash[:policy_value]).to eq('4,3')
+
+    end
+  end
+  #
+  # describe 'privilege right' do
+  #   let(:resource) {
+  #     Puppet::Type.type(:local_security_policy).new(
+  #         :name =>  'Access this computer from the network',
+  #         :ensure         => 'present',
+  #         :policy_setting => 'SeNetworkLogonRight',
+  #         :policy_type    => 'Privilege Rights',
+  #         :policy_value   => 'AUTHENTICATED_USERS,BUILTIN_ADMINISTRATORS'
+  #     )
+  #   }
+  #   it 'should convert a privilege right' do
+  #     defined_policy = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
+  #     defined_policy.merge!(resource.to_hash)
+  #     expect(provider.convert_privilege_right(defined_policy)).to eq('*S-1-5-11,*S-1-5-32-544')
+  #   end
+  #
+  #   it 'should convert a audit right' do
+  #     defined_policy = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
+  #     defined_policy.merge!(resource.to_hash)
+  #     hash = provider.convert_policy_hash(defined_policy)
+  #     expect(hash[:policy_value]).to eq('*S-1-5-11,*S-1-5-32-544')
+  #   end
+  #
+  # end
+  #
+  # describe 'audit event' do
+  #   let(:resource) {
+  #     Puppet::Type.type(:local_security_policy).new(
+  #         :name => 'Audit account logon events',
+  #         :ensure         => 'present',
+  #         :policy_setting => "AuditAccountLogon",
+  #         :policy_type    => "Event Audit",
+  #         :policy_value   => 'Success,Failure',
+  #     )
+  #   }
+  #   it 'should convert a audit right' do
+  #     defined_policy = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
+  #     defined_policy.merge!(resource.to_hash)
+  #     expect(provider.convert_audit(defined_policy)).to eq(3)
+  #   end
+  #
+  #   it 'should convert a audit right' do
+  #     defined_policy = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
+  #     defined_policy.merge!(resource.to_hash)
+  #     hash = provider.convert_policy_hash(defined_policy)
+  #     expect(hash[:policy_value]).to eq(3)
+  #   end
+  # end
 end

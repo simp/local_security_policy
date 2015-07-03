@@ -2,6 +2,8 @@ require 'puppet/provider'
 
 class SecurityPolicy
     attr_reader :wmic_cmd
+    EVENT_TYPES = ["Success,Failure", "Success", "Failure", "No Auditing"]
+
     def initialize
         # suppose to make an instance method for wmic
         @wmic_cmd = Puppet::Provider::CommandDefiner.define('wmic', 'wmic', Puppet::Provider)
@@ -51,6 +53,36 @@ class SecurityPolicy
         else
             value
         end
+    end
+
+    def convert_privilege_right(ensure_value, policy_value)
+        # we need to convert users to sids first
+        if ensure_value.to_s == 'absent'
+            pv = ''
+        else
+            sids = Array.new
+            policy_value.split(",").sort.each do |suser|
+                suser.strip!
+                sids << user_to_sid(suser)
+            end
+            pv = sids.join(",")
+        end
+    end
+
+    # converts the policy value inside the policy hash to conform to the secedit standards
+    def convert_policy_hash(policy_hash)
+        case policy_hash[:policy_type]
+            when 'Privilege Rights'
+                value = convert_privilege_right(policy_hash[:ensure], policy_hash[:policy_value])
+            when 'Event Audit'
+                value = event_to_audit_id(policy_hash[:policy_value])
+            when 'Registry Values'
+                value = SecurityPolicy.convert_registry_value(policy_hash[:name], policy_hash[:policy_value])
+            else
+                value = policy_hash[:policy_value]
+        end
+        policy_hash[:policy_value] = value
+        policy_hash
     end
 
     def builtin_accounts
@@ -152,6 +184,20 @@ class SecurityPolicy
         end
     end
 
+    # Converts a event number to a word
+    def self.event_to_audit_id(event_audit_name)
+        case event_audit_name
+            when "Success,Failure"
+                return 3
+            when "Failure"
+                return 2
+            when "Success"
+                return 1
+            else
+                return 0
+        end
+    end
+
     # returns the key and hash value given the policy name
     def self.find_mapping_from_policy_name(name)
         key, value = lsp_mapping.find do |key,hash|
@@ -176,8 +222,33 @@ class SecurityPolicy
         return value
     end
 
+    def self.valid_lsp?(name)
+        lsp_mapping.keys.include?(name)
+    end
+
+    def self.convert_registry_value(name, value)
+        policy_hash = find_mapping_from_policy_desc(name)
+        "#{policy_hash[:reg_type]},#{value}"
+    end
+
+    # converts the policy value to machine values
+    def self.convert_policy_value(policy_hash, value)
+        sp = SecurityPolicy.new
+        case policy_hash[:policy_type].to_s
+            when 'Privilege Rights'
+                sp.convert_privilege_right(policy_hash[:ensure], value)
+            when 'Event Audit'
+                event_to_audit_id(value)
+            when 'Registry Values'
+                # convert the value to a datatype/value
+                convert_registry_value(policy_hash[:name], value)
+            else
+                value
+        end
+    end
+
     def self.lsp_mapping
-        {
+        @lsp_mapping ||= {
             # Password policy Mappings
             'Enforce password history' => {
                 :name => 'PasswordHistorySize',
