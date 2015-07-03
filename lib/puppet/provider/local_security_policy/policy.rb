@@ -101,14 +101,6 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
     # but this would just ensure a value the setting should go back to
   end
 
-  def self.prefetch(resources)
-    instances.each do |prov|
-      if resource = resources[prov.name]
-        resource.provider = prov
-      end
-    end
-  end
-
   # check if the resource exists on a system already
   def exists?
     # we need to compare the hashes, however, the resource hash has a few keys we dont' care about
