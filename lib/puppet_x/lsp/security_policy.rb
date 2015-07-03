@@ -10,7 +10,15 @@ class SecurityPolicy
     end
 
     def wmic(args=[])
-        @wmic_cmd.execute(args).force_encoding('utf-16le').encode('utf-8', :universal_newline => true).gsub("\xEF\xBB\xBF", '')
+        case args[0]
+            when 'useraccount'
+                @@useraccount ||= wmic_cmd.execute(args).force_encoding('utf-16le').encode('utf-8', :universal_newline => true).gsub("\xEF\xBB\xBF", '')
+            when 'group'
+                @@groupaccount ||= wmic_cmd.execute(args).force_encoding('utf-16le').encode('utf-8', :universal_newline => true).gsub("\xEF\xBB\xBF", '')
+            else
+                # will not cache
+                wmic_cmd.execute(args).force_encoding('utf-16le').encode('utf-8', :universal_newline => true).gsub("\xEF\xBB\xBF", '')
+        end
     end
 
     # collect all the local accounts using wmic

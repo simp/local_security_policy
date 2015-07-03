@@ -32,15 +32,18 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
   end
 
   # export and then read the policy settings from a file into a inifile object
+  # caches the IniFile object during the puppet run
   def self.read_policy_settings(inffile=nil)
     inffile ||= temp_file
-    export_policy_settings(inffile)
-    inffile_content = nil
-    File.open inffile, 'r:IBM437' do |file|
-      # remove /r/n and remove the BOM
-      inffile_content = file.read.force_encoding('utf-16le').encode('utf-8', :universal_newline => true).gsub("\xEF\xBB\xBF", '')
+    unless @file_object
+      export_policy_settings(inffile)
+      File.open inffile, 'r:IBM437' do |file|
+        # remove /r/n and remove the BOM
+        inffile_content = file.read.force_encoding('utf-16le').encode('utf-8', :universal_newline => true).gsub("\xEF\xBB\xBF", '')
+        @file_object ||= PuppetX::IniFile.new(:content => inffile_content)
+      end
     end
-    PuppetX::IniFile.new(:content => inffile_content)
+    @file_object
   end
 
   # exports the current list of policies into a file and then parses that file into
@@ -101,6 +104,15 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
     # but this would just ensure a value the setting should go back to
   end
 
+  def self.prefetch(resources)
+    policies = instances
+    policies.each do |pol|
+      if resource = resources[prov.name]
+        resource.provider = prov
+      end
+    end
+  end
+
   # check if the resource exists on a system already
   def exists?
     # we need to compare the hashes, however, the resource hash has a few keys we dont' care about
@@ -136,7 +148,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
     time = time.strftime("%Y%m%d%H%M%S")
     infout = "c:\\windows\\temp\\infimport-#{time}.inf"
     sdbout = "c:\\windows\\temp\\sdbimport-#{time}.inf"
-    logout = "c:\\windows\\temp\\logout-#{time}.inf"
+    #logout = "c:\\windows\\temp\\logout-#{time}.inf"
     begin
       # read the system state into the inifile object for easy variable setting
       inf = PuppetX::IniFile.new
@@ -148,12 +160,12 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
       # we can utilize the IniFile class to write out the data in ini format
       inf[section] = section_value
       inf.write(:filename => infout, :encoding => 'utf-8')
-      secedit(['/configure', '/db', sdbout, '/cfg',infout, '/log', logout])
+      secedit(['/configure', '/db', sdbout, '/cfg',infout, '/quiet'])
     ensure
-      FileUtils.rm(temp_file)
-      FileUtils.rm(infout)
-      FileUtils.rm(sdbout)
-      FileUtils.rm(logout)
+      FileUtils.rm_f(temp_file)
+      FileUtils.rm_f(infout)
+      FileUtils.rm_f(sdbout)
+      #FileUtils.rm_f(logout)
     end
   end
 end
