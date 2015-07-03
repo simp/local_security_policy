@@ -1,4 +1,6 @@
 require 'spec_helper'
+require "awesome_print"
+
 provider_class = Puppet::Type.type(:local_security_policy).provider(:policy)
 
 describe provider_class do
@@ -64,7 +66,35 @@ describe provider_class do
   it 'should create instances without error' do
     instances = provider_class.instances
     expect(instances.class).to eq(Array)
-    expect(instances.count).to eq(95)
+    expect(instances.count).to be >= 115
+  end
+
+  # if you get this error, your are missing a entry in the lsp_mapping under puppet_x/security_policy
+  # either its a type, case, or missing entry
+  it 'lsp_mapping should contain all the entries in secdata file' do
+    inffile = subject.read_policy_settings
+    missing_policies = {}
+    message = lambda {"Missing policy check the lsp mapping for something like:\n"}
+
+    inffile.sections.each do |section|
+      next if section == 'Unicode'
+      next if section == 'Version'
+      inffile[section].each do |name, value|
+        begin
+          SecurityPolicy.find_mapping_from_policy_name(name)
+        rescue KeyError => e
+          puts e.message
+          if value and section == 'Registry Values'
+            reg_type = value.split(',').first
+            missing_policies[name] = {:name => name, :policy_type => section, :reg_type => reg_type}
+          else
+            missing_policies[name] = {:name => name, :policy_type => section}
+          end
+        end
+      end
+    end
+    ap missing_policies
+    expect(missing_policies.count).to eq(0), message
   end
 
   describe 'resource is removed' do

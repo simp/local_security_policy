@@ -306,8 +306,31 @@ class SecurityPolicy
                 :name => 'NewGuestName',
                 :policy_type => 'System Access',
             },
+            'Accounts: Require Login to Change Password' => {
+                :name => 'RequireLogonToChangePassword',
+                :policy_type => 'System Access'
+            },
+            'ForceLogoffWhenHourExpire' => {
+                :name => 'ForceLogoffWhenHourExpire',
+                :policy_type => 'System Access'
+            },
+            'LSAAnonymousNameLookup' => {
+                :name => 'LSAAnonymousNameLookup',
+                :policy_type => 'System Access'
+            },
+            'EnableAdminAccount' => {
+                :name => 'EnableAdminAccount',
+                :policy_type => 'System Access'
+            },
+            "EnableGuestAccount"=>{
+                :name=>"EnableGuestAccount",
+                :policy_type=>"System Access"
+            },
             # Audit Policy Mappings
-
+            "AuditProcessTracking" => {
+                :name => "AuditProcessTracking",
+                :policy_type => "Event Audit"
+            },
             'Audit account logon events' => {
                 :name => 'AuditAccountLogon',
                 :policy_type => 'Event Audit',
@@ -773,37 +796,37 @@ class SecurityPolicy
                 :policy_type => 'Registry Values',
             },
             'Microsoft network server: Server SPN target name validation level' => {
-                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters\SMBServerNameHardeningLevel',
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\SMBServerNameHardeningLevel',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
             'Microsoft network server: Amount of idle time required before suspending session' => {
-                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters\autodisconnect',
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\autodisconnect',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
             'Microsoft network server: Microsoft network server: Digitally sign communications (always)' => {
-                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters\requiresecuritysignature',
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\requiresecuritysignature',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
             'Microsoft network server: Digitally sign communications (if client agrees)' => {
-                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters\enablesecuritysignature',
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\enablesecuritysignature',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
             'Microsoft network server: Disconnect clients when logon hours expire' => {
-                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters\enableforcedlogoff',
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\enableforcedlogoff',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
             'Network access: Named Pipes that can be accessed anonymously' => {
-                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters\NullSessionPipes',
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\NullSessionPipes',
                 :reg_type => '7',
                 :policy_type => 'Registry Values',
             },
             'Network access: Shares that can be accessed anonymously' => {
-                :name => 'MACHINE\System\CurrentControlSet\Services\LanmanServer\Parameters\NullSessionPipes',
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\NullSessionPipes',
                 :reg_type => '7',
                 :policy_type => 'Registry Values',
             },
@@ -833,10 +856,76 @@ class SecurityPolicy
                 :policy_type => 'Registry Values',
             },
             'Network access: Restrict anonymous access to Named Pipes and Shares' => {
-                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\restrictnullsessaccess',
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\RestrictNullSessaccess',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
+            "MACHINE\\System\\CurrentControlSet\\Control\\Lsa\\MSV1_0\\NTLMMinServerSec" => {
+                :name => "MACHINE\\System\\CurrentControlSet\\Control\\Lsa\\MSV1_0\\NTLMMinServerSec",
+                :policy_type => "Registry Values",
+                :reg_type => "4"
+            },
+            "MACHINE\\System\\CurrentControlSet\\Control\\Lsa\\NoLMHash" => {
+                :name => "MACHINE\\System\\CurrentControlSet\\Control\\Lsa\\NoLMHash",
+                :policy_type => "Registry Values",
+                :reg_type => "4"
+            },
+            "MACHINE\\System\\CurrentControlSet\\Control\\Print\\Providers\\LanMan Print Services\\Servers\\AddPrinterDrivers" => {
+                :name => "MACHINE\\System\\CurrentControlSet\\Control\\Print\\Providers\\LanMan Print Services\\Servers\\AddPrinterDrivers",
+                :policy_type => "Registry Values",
+                :reg_type => "4"
+            },
+            "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\Kernel\\ObCaseInsensitive" => {
+                :name => "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\Kernel\\ObCaseInsensitive",
+                :policy_type => "Registry Values",
+                :reg_type => "4"
+            },
+            "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\Memory Management\\ClearPageFileAtShutdown" => {
+                :name => "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\Memory Management\\ClearPageFileAtShutdown",
+                :policy_type => "Registry Values",
+                :reg_type => "4"
+            },
+            "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\ProtectionMode" => {
+                :name => "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\ProtectionMode",
+                :policy_type => "Registry Values",
+                :reg_type => "4"
+            },
+            "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\SubSystems\\optional" => {
+                :name => "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\SubSystems\\optional",
+                :policy_type => "Registry Values",
+                :reg_type => "7"
+            },
+            "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\AutoDisconnect" => {
+                :name => "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\AutoDisconnect",
+                :policy_type => "Registry Values",
+                :reg_type => "4"
+            },
+            "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\EnableForcedLogOff" => {
+                :name => "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\EnableForcedLogOff",
+                :policy_type => "Registry Values",
+                :reg_type => "4"
+            },
+            "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\EnableSecuritySignature" => {
+                :name => "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\EnableSecuritySignature",
+                :policy_type => "Registry Values",
+                :reg_type => "4"
+            },
+            "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\RequireSecuritySignature" => {
+                :name => "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\RequireSecuritySignature",
+                :policy_type => "Registry Values",
+                :reg_type => "4"
+            },
+            "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\RestrictNullSessAccess" => {
+                :name => "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\RestrictNullSessAccess",
+                :policy_type => "Registry Values",
+                :reg_type => "4"
+            },
+            "MACHINE\\System\\CurrentControlSet\\Services\\LDAP\\LDAPClientIntegrity" => {
+                :name => "MACHINE\\System\\CurrentControlSet\\Services\\LDAP\\LDAPClientIntegrity",
+                :policy_type => "Registry Values",
+                :reg_type => "4"
+            }
+
         }
     end
 end

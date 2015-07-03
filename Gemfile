@@ -11,6 +11,7 @@ group :test do
   gem "metadata-json-lint"
   gem 'puppet-syntax'
   gem 'puppet-lint'
+  gem 'awesome_print'
 end
 
 group :development do
