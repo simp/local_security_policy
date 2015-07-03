@@ -68,7 +68,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
         }
         # some of these values need to be converted from machine
         #policy_hash[:policy_value] = SecurityPolicy.convert_policy_value(policy_hash, parameter_value)
-        inst = Puppet::Type.type(:local_security_policy).new(policy_hash)
+        inst = new(policy_hash)
         settings << inst
       rescue KeyError => e
         Puppet.debug e.message
@@ -118,10 +118,11 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
     # we need to compare the hashes, however, the resource hash has a few keys we dont' care about
     # which precludes us from comparing hashes directly so I went ahead a compared almost all the keys manually via
     # conditionals.
+
     self.class.instances.each do | inst|
-      if inst[:policy_type] == resource[:policy_type] && inst[:name] == resource[:name]
-        if inst[:policy_value] == resource[:policy_value] && inst[:policy_setting] == resource[:policy_setting]
-          return inst[:ensure].to_s == resource[:ensure].to_s
+      if inst.policy_type == resource[:policy_type] && inst.name == resource[:name]
+        if inst.policy_value == resource[:policy_value] && inst.policy_setting == resource[:policy_setting]
+          return inst.ensure.to_s == resource[:ensure].to_s
         end
       end
     end

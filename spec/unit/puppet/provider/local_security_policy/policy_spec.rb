@@ -96,7 +96,15 @@ describe provider_class do
     ap missing_policies
     expect(missing_policies.count).to eq(0), message
   end
-
+  # it 'simple test' do
+  #   data = Puppet::Type.type(:local_security_policy).provide(:policy).new(
+  #       :name => 'Network access: Let Everyone permissions apply to anonymous users',
+  #       :ensure => 'present',
+  #       :policy_setting => 'MACHINE\System\CurrentControlSet\Control\Lsa\EveryoneIncludesAnonymous',
+  #       :policy_type    => 'Registry Values',
+  #       :policy_value   => '0'
+  #   )
+  # end
   describe 'resource is removed' do
     let(:resource) {
       Puppet::Type.type(:local_security_policy).new(
