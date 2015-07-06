@@ -61,7 +61,6 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
         policy_hash = {
             :name => policy_desc,
             :ensure => :present,
-            :provider => :policy,
             :policy_type => section ,
             :policy_setting => parameter_name,
             :policy_value => parameter_value,
@@ -79,7 +78,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
 
   # find all the instances of this provider and type
   def self.instances
-    self.find_policy_settings
+    find_policy_settings
   end
 
   def initialize(value={})
@@ -106,27 +105,16 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
 
   def self.prefetch(resources)
     policies = instances
-    policies.each do |pol|
-      if resource = resources[prov.name]
-        resource.provider = :policy
+    resources.keys.each do |name|
+      found_pol = policies.find { |pol| pol.name == name }
+      if found_pol
+        resources[name].provider = found_pol
       end
     end
   end
 
-  # check if the resource exists on a system already
   def exists?
-    # we need to compare the hashes, however, the resource hash has a few keys we dont' care about
-    # which precludes us from comparing hashes directly so I went ahead a compared almost all the keys manually via
-    # conditionals.
-
-    self.class.instances.each do | inst|
-      if inst.policy_type == resource[:policy_type] && inst.name == resource[:name]
-        if inst.policy_value == resource[:policy_value] && inst.policy_setting == resource[:policy_setting]
-          return inst.ensure.to_s == resource[:ensure].to_s
-        end
-      end
-    end
-    false
+    @property_hash[:ensure] == :present
   end
 
   # gets the property hash from the provider
@@ -150,6 +138,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
     infout = "c:\\windows\\temp\\infimport-#{time}.inf"
     sdbout = "c:\\windows\\temp\\sdbimport-#{time}.inf"
     #logout = "c:\\windows\\temp\\logout-#{time}.inf"
+    status = nil
     begin
       # read the system state into the inifile object for easy variable setting
       inf = PuppetX::IniFile.new
@@ -161,7 +150,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
       # we can utilize the IniFile class to write out the data in ini format
       inf[section] = section_value
       inf.write(:filename => infout, :encoding => 'utf-8')
-      secedit(['/configure', '/db', sdbout, '/cfg',infout, '/quiet'])
+      secedit(['/configure', '/db', sdbout, '/cfg',infout])
     ensure
       FileUtils.rm_f(temp_file)
       FileUtils.rm_f(infout)
