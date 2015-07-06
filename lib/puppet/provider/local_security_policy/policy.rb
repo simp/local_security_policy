@@ -89,7 +89,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
   # create the resource and convert any user supplied values to computer terms
   def create
     begin
-      write_policy_to_system(resource.to_hash)
+      write_policy_to_system(resource)
     rescue KeyError => e
       Puppet.debug e.message
       # send helpful debug message to user here
@@ -108,7 +108,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
     policies = instances
     policies.each do |pol|
       if resource = resources[prov.name]
-        resource.provider = prov
+        resource.provider = :policy
       end
     end
   end

@@ -96,15 +96,29 @@ describe provider_class do
     ap missing_policies
     expect(missing_policies.count).to eq(0), message
   end
-  # it 'simple test' do
-  #   data = Puppet::Type.type(:local_security_policy).provide(:policy).new(
-  #       :name => 'Network access: Let Everyone permissions apply to anonymous users',
-  #       :ensure => 'present',
-  #       :policy_setting => 'MACHINE\System\CurrentControlSet\Control\Lsa\EveryoneIncludesAnonymous',
-  #       :policy_type    => 'Registry Values',
-  #       :policy_value   => '0'
-  #   )
-  # end
+
+  xit 'ensure instances works' do
+    instances = Puppet::Type.type(:local_security_policy).instances
+    expect(instances.count).to be > 1
+  end
+
+  describe 'write output' do
+    let(:resource) {
+      Puppet::Type.type(:local_security_policy).new(
+          :name => 'Recovery console: Allow automatic adminstrative logon',
+        :ensure => 'present',
+        :policy_setting => 'MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Setup\RecoveryConsole\SecurityLevel',
+        :policy_type    => 'Registry Values',
+        :policy_value   => '0')
+    }
+    xit 'should write out the file correctly' do
+
+      provider.create
+
+    end
+  end
+
+
   describe 'resource is removed' do
     let(:resource) {
       Puppet::Type.type(:local_security_policy).new(
@@ -146,7 +160,7 @@ describe provider_class do
           :ensure => 'present',
           :policy_setting => '1MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Setup\RecoveryConsole\SecurityLevel',
           :policy_type    => 'Registry Values',
-          :policy_value   => '0')
+          :policy_value   => '76')
     }
     it 'exists? should be false' do
       expect(provider.exists?).to eq(false)

@@ -11,10 +11,6 @@ Puppet::Type.newtype(:local_security_policy) do
 
   ensurable
 
-  def policy_utils
-    @policy_utils ||= SecurityPolicy.new
-  end
-
   newparam(:name, :namevar => true) do
     desc 'Local Security Setting Name. What you see it the GUI.'
     validate do |value|
@@ -23,21 +19,46 @@ Puppet::Type.newtype(:local_security_policy) do
   end
 
   newproperty(:policy_type) do
-    newvalues('System Access','Event Audit','Privilege Rights','Registry Values', nil, '' )
+    newvalues('System Access','Event Audit','Privilege Rights','Registry Values', nil, '')
     desc 'Local Security Policy Machine Name.  What OS knows it by.'
+    defaultto do
+      begin
+        policy_hash = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
+      rescue KeyError => e
+        fail(e.message)
+      end
+      policy_hash[:policy_type]
+    end
     # uses the resource name to perform a lookup of the defined policy and returns the policy type
     munge do |value|
       begin
         policy_hash = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
-        policy_hash[:policy_type]
       rescue KeyError => e
         fail(e.message)
       end
+      policy_hash[:policy_type]
     end
   end
 
   newproperty(:policy_setting) do
+
     desc 'Local Security Policy Machine Name.  What OS knows it by.'
+    defaultto do
+      begin
+        policy_hash = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
+      rescue KeyError => e
+        fail(e.message)
+      end
+      policy_hash[:name]
+    end
+    munge do |value|
+      begin
+        policy_hash = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
+      rescue KeyError => e
+        fail(e.message)
+      end
+      policy_hash[:name]
+    end
   end
 
   newproperty(:policy_value) do

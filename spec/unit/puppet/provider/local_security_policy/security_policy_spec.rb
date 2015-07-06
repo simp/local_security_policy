@@ -18,6 +18,8 @@ describe 'SecurityPolicy' do
     allow(subject).to receive(:temp_file).and_return(secdata)
     security_policy.stubs(:wmic).with([ "useraccount", "get", "name,sid", "/format:csv"]).returns(File.read(userdata))
     security_policy.stubs(:wmic).with([ "group", "get", "name,sid", "/format:csv"]).returns(File.read(groupdata))
+    allow_any_instance_of(SecurityPolicy).to receive(:wmic).with([ "useraccount", "get", "name,sid", "/format:csv"]).and_return(userdata)
+    allow_any_instance_of(SecurityPolicy).to receive(:wmic).with([ "group", "get", "name,sid", "/format:csv"]).and_return(groupdata)
 
     subject.stubs(:secedit).with(['/configure', '/db', 'sdbout', '/cfg', 'infout', '/quiet'])
     subject.stubs(:secedit).with(['/export', '/cfg', secdata, '/quiet'])
@@ -106,30 +108,22 @@ describe 'SecurityPolicy' do
     end
   end
   #
-  # describe 'privilege right' do
-  #   let(:resource) {
-  #     Puppet::Type.type(:local_security_policy).new(
-  #         :name =>  'Access this computer from the network',
-  #         :ensure         => 'present',
-  #         :policy_setting => 'SeNetworkLogonRight',
-  #         :policy_type    => 'Privilege Rights',
-  #         :policy_value   => 'AUTHENTICATED_USERS,BUILTIN_ADMINISTRATORS'
-  #     )
-  #   }
-  #   it 'should convert a privilege right' do
-  #     defined_policy = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
-  #     defined_policy.merge!(resource.to_hash)
-  #     expect(provider.convert_privilege_right(defined_policy)).to eq('*S-1-5-11,*S-1-5-32-544')
-  #   end
-  #
-  #   it 'should convert a audit right' do
-  #     defined_policy = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
-  #     defined_policy.merge!(resource.to_hash)
-  #     hash = provider.convert_policy_hash(defined_policy)
-  #     expect(hash[:policy_value]).to eq('*S-1-5-11,*S-1-5-32-544')
-  #   end
-  #
-  # end
+  describe 'privilege right' do
+    let(:resource) {
+      Puppet::Type.type(:local_security_policy).new(
+          :name =>  'Access this computer from the network',
+          :ensure         => 'present',
+          :policy_setting => 'SeNetworkLogonRight',
+          :policy_type    => 'Privilege Rights',
+          :policy_value   => 'AUTHENTICATED_USERS,BUILTIN_ADMINISTRATORS'
+      )
+    }
+    it 'should convert a privilege right to sids' do
+      hash = security_policy.convert_policy_hash(resource)
+      expect(hash[:policy_value]).to eq('*S-1-5-11,*S-1-5-32-544')
+    end
+
+  end
   #
   # describe 'audit event' do
   #   let(:resource) {

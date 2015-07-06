@@ -246,7 +246,10 @@ class SecurityPolicy
     # converts the policy value to machine values
     def self.convert_policy_value(policy_hash, value)
         sp = SecurityPolicy.new
-        case policy_hash[:policy_type].to_s
+        # I would rather not have to look this info up, but the type code will not always have this info handy
+        # without knowing the policy type we can't figure out what to convert
+        policy_type = find_mapping_from_policy_desc(policy_hash[:name])[:policy_type]
+        case policy_type.to_s
             when 'Privilege Rights'
                 sp.convert_privilege_right(policy_hash[:ensure], value)
             when 'Event Audit'
