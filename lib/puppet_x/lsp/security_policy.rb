@@ -304,10 +304,12 @@ class SecurityPolicy
             'Accounts: Rename administrator account' => {
                 :name => 'NewAdministratorName',
                 :policy_type => 'System Access',
+                :data_type => :quoted_string
             },
             'Accounts: Rename guest account' => {
                 :name => 'NewGuestName',
                 :policy_type => 'System Access',
+                :data_type => :quoted_string
             },
             'Accounts: Require Login to Change Password' => {
                 :name => 'RequireLogonToChangePassword',

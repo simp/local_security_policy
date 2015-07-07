@@ -49,6 +49,8 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
   # exports the current list of policies into a file and then parses that file into
   # provider instances.  If an item is found on the system but not in the lsp_mapping,
   # that policy is not supported only because we cannot match the description
+  # furthermore, if a policy is in the mapping but not in the system we would consider
+  # that resource absent
   def self.find_policy_settings
     settings = []
     inf = read_policy_settings
@@ -57,16 +59,15 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
       next if section == 'Unicode'
       next if section == 'Version'
       begin
+        ensure_value = parameter_value.nil? ? :absent : :present
         policy_desc, policy_values = SecurityPolicy.find_mapping_from_policy_name(parameter_name)
         policy_hash = {
             :name => policy_desc,
-            :ensure => :present,
+            :ensure => ensure_value,
             :policy_type => section ,
             :policy_setting => parameter_name,
-            :policy_value => parameter_value.to_s.strip,
+            :policy_value => fixup_value(parameter_value, policy_values[:data_type])
         }
-        # some of these values need to be converted from machine
-        #policy_hash[:policy_value] = SecurityPolicy.convert_policy_value(policy_hash, parameter_value)
         inst = new(policy_hash)
         settings << inst
       rescue KeyError => e
@@ -74,6 +75,18 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
       end
     end
     settings
+  end
+
+  # converts any values that might be of a certain type specified in the mapping
+  # converts everything to a string
+  # returns the value
+  def self.fixup_value(value, type)
+    value = value.to_s.strip
+    case type
+      when :quoted_string
+        value = "\"#{value}\""
+    end
+    value
   end
 
   # find all the instances of this provider and type
@@ -114,12 +127,11 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
   end
 
   def exists?
-    # unless resource[:name] == @property_hash[:name] && resource[:policy_value] == @property_hash[:policy_value]
-    #   Puppet.info('#######')
-    #   Puppet.info("#{resource[:name].inspect} == #{@property_hash[:name].inspect}")
-    #   Puppet.debug("#{resource[:policy_value].inspect} == #{@property_hash[:policy_value].inspect}")
-    #   Puppet.info('#######')
-    # end
+    unless resource[:name] == @property_hash[:name] && resource[:policy_value] == @property_hash[:policy_value]
+      Puppet.debug("##############")
+      Puppet.debug("#{resource[:name].inspect} == #{@property_hash[:name].inspect}")
+      Puppet.debug("#{resource[:policy_value].inspect} == #{@property_hash[:policy_value].inspect}")
+    end
     if resource[:name] == @property_hash[:name] && resource[:policy_value] == @property_hash[:policy_value]
       true
     else
