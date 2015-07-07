@@ -696,11 +696,11 @@ class SecurityPolicy
                 :policy_type => 'Registry Values',
             },
             'System cryptography: Force strong key protection for user keys stored on the computer' => {
-                :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\ForceGuest',
+                :name => 'MACHINE\Software\Policies\Microsoft\Cryptography\ForceKeyProtection',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
-            'Audit: Audit the use of Backup and Restore priviliege' => {
+            'Audit: Audit the use of Backup and Restore privilege' => {
                 :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\FullPrivilegeAuditing',
                 :reg_type => '3',
                 :policy_type => 'Registry Values',
@@ -710,7 +710,7 @@ class SecurityPolicy
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
-            'Network security: All Local System to use computer identiry for NTLM' => {
+            'Network security: All Local System to use computer identity for NTLM' => {
                 :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0\NTLMMinClientSec',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
@@ -736,7 +736,12 @@ class SecurityPolicy
                 :policy_type => 'Registry Values',
             },
             'Devices: Prevent users from installing printer drivers' => {
-                :name => 'MACHINE\System\Microsoft\Windows\CurrentVersion\Policies\System\UndockWithoutLogon',
+              :name => 'MACHINE\System\CurrentControlSet\Control\Print\Providers\LanMan Print Services\Servers\AddPrinterDrivers',
+              :reg_type => '4',
+              :policy_type => 'Registry Values',
+            },              
+            'Devices: Allow undock without having to log on' => {
+                :name => 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\UndockWithoutLogon',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
