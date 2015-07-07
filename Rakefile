@@ -1,7 +1,7 @@
 require 'puppetlabs_spec_helper/rake_tasks'
 require 'puppet-lint/tasks/puppet-lint'
 require 'puppet-syntax/tasks/puppet-syntax'
-
+require 'awesome_print'
 # These two gems aren't always present, for instance
 # on Travis with --without development
 begin
@@ -42,3 +42,11 @@ task :test => [
        :spec,
        :metadata,
      ]
+
+desc 'Retrun list of policie names'
+task :policy_list do
+  require_relative "lib/puppet_x/lsp/security_policy"
+  puts "\nCurrent Policy List"
+  puts "----------------------------------------------"
+  SecurityPolicy.lsp_mapping.keys.sort.each {|key| puts "#{key}\n"}
+end
