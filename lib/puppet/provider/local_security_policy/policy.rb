@@ -63,7 +63,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
             :ensure => :present,
             :policy_type => section ,
             :policy_setting => parameter_name,
-            :policy_value => parameter_value,
+            :policy_value => parameter_value.to_s,
         }
         # some of these values need to be converted from machine
         #policy_hash[:policy_value] = SecurityPolicy.convert_policy_value(policy_hash, parameter_value)
@@ -114,7 +114,10 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
   end
 
   def exists?
-    @property_hash[:ensure] == :present
+    if resource[:name] == @property_hash[:name] && resource[:policy_value] == @property_hash[:policy_value]
+      return true
+    end
+    false
   end
 
   # gets the property hash from the provider
