@@ -73,7 +73,7 @@ class SecurityPolicy
                 suser.strip!
                 sids << user_to_sid(suser)
             end
-            pv = sids.join(",")
+            pv = sids.sort.join(",")
         end
     end
 
