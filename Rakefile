@@ -43,7 +43,7 @@ task :test => [
        :metadata,
      ]
 
-desc 'Retrun list of policie names'
+desc 'Return list of policy names'
 task :policy_list do
   require_relative "lib/puppet_x/lsp/security_policy"
   puts "\nCurrent Policy List"
