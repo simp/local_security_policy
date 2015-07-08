@@ -815,7 +815,7 @@ class SecurityPolicy
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
-            'Microsoft network server: Microsoft network server: Digitally sign communications (always)' => {
+            'Microsoft network server: Digitally sign communications (always)' => {
                 :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\requiresecuritysignature',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
