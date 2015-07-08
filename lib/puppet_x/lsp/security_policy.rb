@@ -550,7 +550,7 @@ class SecurityPolicy
                 :policy_type => 'Privilege Rights',
             },
             #Registry Keys
-            'Recovery console: Allow automatic adminstrative logon' => {
+            'Recovery console: Allow automatic administrative logon' => {
                 :name => 'MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Setup\RecoveryConsole\SecurityLevel',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
@@ -795,7 +795,7 @@ class SecurityPolicy
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
-            'Microsoft network client: Microsoft network client: Digitally sign communications (if server agrees)' => {
+            'Microsoft network client: Digitally sign communications (if server agrees)' => {
                 :name => 'MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters\EnableSecuritySignature',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
