@@ -1,6 +1,6 @@
 {
   "name": "ayohrling-local_security_policy",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "author": "Paul S. Cannon, Adam Yohrling, Corey Osman",
   "summary": "Windows Local Security Policy management. Forked from cannonps/local_security_policy",
   "license": "Apache 2.0",
