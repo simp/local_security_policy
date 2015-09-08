@@ -4,5 +4,7 @@ fixtures:
     repositories:
       stdlib:
         repo: https://github.com/puppetlabs/puppetlabs-stdlib.git
-        ref: 4.3.2
+        ref: 4.6.0
+      hieradata:
+        repo: 'git@gitlab.com:singlestone/hieradata.git'
     forge_modules:
