@@ -46,12 +46,24 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
     @file_object
   end
 
+  # converts any values that might be of a certain type specified in the mapping
+  # converts everything to a string
+  # returns the value
+  def self.fixup_value(value, type)
+    value = value.to_s.strip
+    case type
+      when :quoted_string
+        value = "\"#{value}\""
+    end
+    value
+  end
+
   # exports the current list of policies into a file and then parses that file into
   # provider instances.  If an item is found on the system but not in the lsp_mapping,
   # that policy is not supported only because we cannot match the description
   # furthermore, if a policy is in the mapping but not in the system we would consider
   # that resource absent
-  def self.find_policy_settings
+  def self.instances
     settings = []
     inf = read_policy_settings
     # need to find the policy, section_header, policy_setting, policy_value and reg_type
@@ -77,35 +89,28 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
     settings
   end
 
-  # converts any values that might be of a certain type specified in the mapping
-  # converts everything to a string
-  # returns the value
-  def self.fixup_value(value, type)
-    value = value.to_s.strip
-    case type
-      when :quoted_string
-        value = "\"#{value}\""
-    end
-    value
-  end
-
-  # find all the instances of this provider and type
-  def self.instances
-    find_policy_settings
-  end
-
-  def initialize(value={})
-    super(value)
-  end
-
-  # create the resource and convert any user supplied values to computer terms
-  def create
+  # the flush method will be the last method called after applying all the other
+  # properties, by default nothing will be enabled or disabled unless the disable/enable are set to true
+  # if we ever move to a point were we can write all the settings via one big config file we
+  # would want to do that here.
+  def flush
     begin
-      write_policy_to_system(resource)
+      write_policy_to_system(resource.to_hash)
     rescue KeyError => e
       Puppet.debug e.message
       # send helpful debug message to user here
     end
+    @property_hash = resource.to_hash
+  end
+
+  def initialize(value={})
+    super(value)
+    @property_flush = {}
+  end
+
+  # create the resource and convert any user supplied values to computer terms
+  def create
+    # do everything in flush method
   end
 
   # this is currently not implemented correctly on purpose until we can figure out how to safely remove
@@ -119,24 +124,14 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
   def self.prefetch(resources)
     policies = instances
     resources.keys.each do |name|
-      found_pol = policies.find { |pol| pol.name == name }
-      if found_pol
+      if found_pol = policies.find { |pol| pol.name == name }
         resources[name].provider = found_pol
       end
     end
   end
 
   def exists?
-    unless resource[:name] == @property_hash[:name] && resource[:policy_value] == @property_hash[:policy_value]
-      Puppet.debug("##############")
-      Puppet.debug("#{resource[:name].inspect} == #{@property_hash[:name].inspect}")
-      Puppet.debug("#{resource[:policy_value].inspect} == #{@property_hash[:policy_value].inspect}")
-    end
-    if resource[:name] == @property_hash[:name] && resource[:policy_value] == @property_hash[:policy_value]
-      true
-    else
-      false
-    end
+    @property_hash[:ensure] == :present
   end
 
   # gets the property hash from the provider

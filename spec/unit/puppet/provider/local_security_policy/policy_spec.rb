@@ -66,7 +66,7 @@ describe provider_class do
   it 'should create instances without error' do
     instances = provider_class.instances
     expect(instances.class).to eq(Array)
-    expect(instances.count).to be >= 115
+    expect(instances.count).to be >= 114
   end
 
   # if you get this error, your are missing a entry in the lsp_mapping under puppet_x/security_policy
@@ -74,7 +74,7 @@ describe provider_class do
   it 'lsp_mapping should contain all the entries in secdata file' do
     inffile = subject.read_policy_settings
     missing_policies = {}
-    message = lambda {"Missing policy check the lsp mapping for something like:\n"}
+    message = lambda {|pol| "Missing policy, check the lsp mapping for something like: #{pol}\n"}
 
     inffile.sections.each do |section|
       next if section == 'Unicode'
@@ -94,7 +94,7 @@ describe provider_class do
       end
     end
     ap missing_policies
-    expect(missing_policies.count).to eq(0), message
+    expect(missing_policies.count).to eq(0), "Missing policy, check the lsp mapping"
   end
 
   xit 'ensure instances works' do
@@ -148,7 +148,6 @@ describe provider_class do
           :policy_value   => '0')
     }
     it 'exists? should be true' do
-      expect(provider.exists?).to eq(true)
       expect(provider).to receive(:create).exactly(0).times
     end
   end

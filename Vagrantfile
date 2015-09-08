@@ -72,8 +72,8 @@ def vm(opt)
 
       if os_type == :windows
         manifest = ENV['VAGRANT_MANIFEST'] || 'init.pp'
-        mod.vm.provision :shell, :inline => "@powershell -NoProfile -ExecutionPolicy Bypass -Command \"iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))\" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
-        mod.vm.provision :shell, :inline => "choco install puppet"
+       # mod.vm.provision :shell, :inline => "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))"
+       # mod.vm.provision :shell, :inline => "choco -y install puppet"
         mod.vm.provision :shell, :inline => "puppet apply --modulepath 'C:/ProgramData/PuppetLabs/puppet/etc/modules;C:/temp/modules' --verbose C:/ProgramData/PuppetLabs/puppet/etc/modules/#{module_name}/tests/#{manifest}"
       else
         mod.vm.provision :puppet do |p|
@@ -90,6 +90,5 @@ def vm(opt)
   end
 end
 
-vm :hostname => 'win2012r2', :module => 'profiles', :box => 'opentable/win-2012r2-standard-amd64-nocm', :url => 'opentable/win-2012r2-standard-amd64-nocm', :cpu => 1, :memory => 4096, :gui => true
-vm :hostname => 'win2008r2', :module => 'profiles', :box => 'opentable/win-2008r2-standard-amd64-nocm', :url => 'opentable/win-2008r2-standard-amd64-nocm', :cpu => 1, :memory => 4096, :gui => true
-vm :hostname => 'centos6', :module => 'profiles', :box => 'puppetlabs/centos-6.6-64-puppet', :url => 'puppetlabs/centos-6.6-64-puppet', :cpu => 1, :memory => 2048, :gui => false
+vm :hostname => 'win2012r2', :module => 'profiles', :box => 'opentable/win-2012r2-standard-amd64-nocm', :url => 'opentable/win-2012r2-standard-amd64-nocm', :os_type => :windows, :cpu => 1, :memory => 4096, :gui => true
+vm :hostname => 'win2008r2', :module => 'profiles', :box => 'opentable/win-2008r2-standard-amd64-nocm', :url => 'opentable/win-2008r2-standard-amd64-nocm', :os_type => :windows, :cpu => 1, :memory => 4096, :gui => true

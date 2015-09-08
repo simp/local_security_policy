@@ -1,7 +1,7 @@
 require 'puppetlabs_spec_helper/rake_tasks'
 require 'puppet-lint/tasks/puppet-lint'
 require 'puppet-syntax/tasks/puppet-syntax'
-require 'awesome_print'
+
 # These two gems aren't always present, for instance
 # on Travis with --without development
 begin
@@ -42,6 +42,34 @@ task :test => [
        :spec,
        :metadata,
      ]
+def io_popen(command)
+  IO.popen(command) do |io|
+    io.each do |line|
+      print line
+      yield line if block_given?
+    end
+  end
+end
+
+desc 'Vagrant VM power up and provision'
+task :vagrant_up, [:manifest, :hostname] do |t, args|
+  args.with_defaults(:manifest => 'init.pp', :hostname => '')
+  Rake::Task['spec_prep'].execute
+  ENV['VAGRANT_MANIFEST'] = args[:manifest]
+  provision = false
+  io_popen("vagrant up #{args[:hostname]}") do |line|
+    provision = true if line =~ /is already running./
+  end
+  io_popen("vagrant provision #{args[:hostname]}") if provision
+end
+
+# Cleanup vagrant environment
+desc 'Vagrant VM shutdown and fixtures cleanup'
+task :vagrant_destroy do
+  Rake::Task['spec_prep'].execute
+  `vagrant destroy -f`
+  Rake::Task['spec_clean'].execute
+end
 
 desc 'Return list of policy names'
 task :policy_list do

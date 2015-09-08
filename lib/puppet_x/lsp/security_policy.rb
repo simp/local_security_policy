@@ -790,6 +790,11 @@ class SecurityPolicy
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
+            'ForceGuest' => {
+                :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\ForceGuest',
+                :policy_type => "Registry Values",
+                :reg_type => "4"
+            },
             'Microsoft network client: Digitally sign communications (always)' => {
                 :name => 'MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters\RequireSecuritySignature',
                 :reg_type => '4',
