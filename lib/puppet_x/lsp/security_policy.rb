@@ -423,7 +423,7 @@ class SecurityPolicy
                 :policy_type => 'Privilege Rights',
             },
             'Create a token object' => {
-                :name => 'SeAssignPrimaryTokenPrivilege',
+                :name => 'SeCreateTokenPrivilege',
                 :policy_type => 'Privilege Rights',
             },
             'Create global objects' => {
