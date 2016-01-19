@@ -6,9 +6,9 @@ begin
   require "puppet_x/lsp/security_policy"
 rescue LoadError => detail
   require 'pathname' # JJM WORK_AROUND #14073
-  module_base = Pathname.new(__FILE__).dirname
-  require module_base + "../../../" + "puppet_x/twp/inifile.rb"
-  require module_base + "../../../" + "puppet_x/lsp/security_policy.rb"
+  mod = Puppet::Module.find('local_security_policy', Puppet[:environment].to_s)
+  require File.join(mod.path, 'lib/puppet_x/twp/inifile')
+  require File.join(mod.path, 'lib/puppet_x/lsp/security_policy')
 end
 
 Puppet::Type.type(:local_security_policy).provide(:policy) do
