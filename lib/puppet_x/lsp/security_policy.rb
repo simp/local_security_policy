@@ -95,7 +95,10 @@ class SecurityPolicy
     end
 
     def builtin_accounts
-        ary = [
+      # more accounts and SIDs can be found at https://support.microsoft.com/en-us/kb/243330
+      ary = [
+            ["","NULL","S-1-0"],
+            ["","NOBODY","S-1-0-0"],
             ["","EVERYONE","S-1-1-0"],
             ["","LOCAL","S-1-2-0"],
             ["","CONSOLE_LOGON","S-1-2-1"],
