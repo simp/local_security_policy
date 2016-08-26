@@ -10,7 +10,6 @@ LSP is key to a baseline configuration of the following security features:
 ### Account Policy
   * Password Policy
   * Account Lockout Policy
-  qqqqq
 ### Local Policy
   * Audit Policy
   * User Rights Assignment
@@ -192,6 +191,8 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
       Network access: Restrict anonymous access to Named Pipes and Shares
       Network access: Shares that can be accessed anonymously
       Network security: All Local System to use computer identiry for NTLM
+      Network security: Do not store LAN Manager hash value on next password change
+      Network security: LAN Manager authentication level
       Password must meet complexity requirements
       Perform volume maintenance tasks
       Profile single process

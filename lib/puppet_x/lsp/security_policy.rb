@@ -879,6 +879,17 @@ class SecurityPolicy
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
+            'Network security: Do not store LAN Manager hash value on next password change' => {
+                :name           => 'MACHINE\System\CurrentControlSet\Control\Lsa\NoLMHash',
+                :reg_type       => '4',
+                :policy_type    => 'Registry Values',
+                :data_type      => :boolean,
+            },
+            'Network security: LAN Manager authentication level' => {
+                :name           => 'MACHINE\System\CurrentControlSet\Control\Lsa\LmCompatibilityLevel',
+                :reg_type       => '4',
+                :policy_type    => 'Registry Values',
+            },
             "MACHINE\\System\\CurrentControlSet\\Control\\Lsa\\MSV1_0\\NTLMMinServerSec" => {
                 :name => "MACHINE\\System\\CurrentControlSet\\Control\\Lsa\\MSV1_0\\NTLMMinServerSec",
                 :policy_type => "Registry Values",
