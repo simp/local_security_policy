@@ -31,7 +31,7 @@ describe Puppet::Type.type(:local_security_policy) do
               :ensure         => 'present',
               :policy_setting => "AuditAccountLogon",
               :policy_type    => "Event Audit",
-              :policy_value   => 'xuccess,Failure',
+              :policy_value   => 'Success,Failure',
           )}.to raise_error(Puppet::ResourceError)
     end
   end
