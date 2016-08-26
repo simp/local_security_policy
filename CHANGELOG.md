@@ -1,3 +1,6 @@
+###[0.6.0] - Adam Yohrling
+ * Added new Network security settings, Typo Fixes, Idempotency - #18
+
 ###[0.5.2] - Ryan Russell-Yates
  * Updated all ruby files to UTF-8 forced encoding.
 
