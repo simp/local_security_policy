@@ -743,7 +743,7 @@ class SecurityPolicy
               :name => 'MACHINE\System\CurrentControlSet\Control\Print\Providers\LanMan Print Services\Servers\AddPrinterDrivers',
               :reg_type => '4',
               :policy_type => 'Registry Values',
-            },              
+            },
             'Devices: Allow undock without having to log on' => {
                 :name => 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\UndockWithoutLogon',
                 :reg_type => '4',
@@ -820,22 +820,22 @@ class SecurityPolicy
                 :policy_type => 'Registry Values',
             },
             'Microsoft network server: Amount of idle time required before suspending session' => {
-                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\autodisconnect',
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\AutoDisconnect',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
             'Microsoft network server: Digitally sign communications (always)' => {
-                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\requiresecuritysignature',
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\RequireSecuritySignature',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
             'Microsoft network server: Digitally sign communications (if client agrees)' => {
-                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\enablesecuritysignature',
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\EnableSecuritySignature',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
             'Microsoft network server: Disconnect clients when logon hours expire' => {
-                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\enableforcedlogoff',
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\EnableForcedLogOff',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
@@ -845,7 +845,7 @@ class SecurityPolicy
                 :policy_type => 'Registry Values',
             },
             'Network access: Shares that can be accessed anonymously' => {
-                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\NullSessionPipes',
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\NullSessionShares',
                 :reg_type => '7',
                 :policy_type => 'Registry Values',
             },
@@ -875,9 +875,20 @@ class SecurityPolicy
                 :policy_type => 'Registry Values',
             },
             'Network access: Restrict anonymous access to Named Pipes and Shares' => {
-                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\RestrictNullSessaccess',
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\RestrictNullSessAccess',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
+            },
+            'Network security: Do not store LAN Manager hash value on next password change' => {
+                :name           => 'MACHINE\System\CurrentControlSet\Control\Lsa\NoLMHash',
+                :reg_type       => '4',
+                :policy_type    => 'Registry Values',
+                :data_type      => :boolean,
+            },
+            'Network security: LAN Manager authentication level' => {
+                :name           => 'MACHINE\System\CurrentControlSet\Control\Lsa\LmCompatibilityLevel',
+                :reg_type       => '4',
+                :policy_type    => 'Registry Values',
             },
             "MACHINE\\System\\CurrentControlSet\\Control\\Lsa\\MSV1_0\\NTLMMinServerSec" => {
                 :name => "MACHINE\\System\\CurrentControlSet\\Control\\Lsa\\MSV1_0\\NTLMMinServerSec",
