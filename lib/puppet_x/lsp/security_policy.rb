@@ -319,11 +319,11 @@ class SecurityPolicy
                 :name => 'RequireLogonToChangePassword',
                 :policy_type => 'System Access'
             },
-            'ForceLogoffWhenHourExpire' => {
+            'Network security: Force logoff when logon hours expire' => {
                 :name => 'ForceLogoffWhenHourExpire',
                 :policy_type => 'System Access'
             },
-            'LSAAnonymousNameLookup' => {
+            'Network access: Allow anonymous SID/name translation' => {
                 :name => 'LSAAnonymousNameLookup',
                 :policy_type => 'System Access'
             },
@@ -333,13 +333,9 @@ class SecurityPolicy
             },
             "EnableGuestAccount"=>{
                 :name=>"EnableGuestAccount",
-                :policy_type=>"System Access"
+                :policy_type => 'System Access'
             },
             # Audit Policy Mappings
-            "AuditProcessTracking" => {
-                :name => "AuditProcessTracking",
-                :policy_type => "Event Audit"
-            },
             'Audit account logon events' => {
                 :name => 'AuditAccountLogon',
                 :policy_type => 'Event Audit',
@@ -369,12 +365,17 @@ class SecurityPolicy
                 :policy_type => 'Event Audit',
             },
             'Audit process tracking' => {
-                :name => 'AuditProcessTraking',
+                :name => 'AuditProcessTracking',
                 :policy_type => 'Event Audit',
             },
             'Audit system events' => {
                 :name => 'AuditSystemEvents',
                 :policy_type => 'Event Audit',
+            },
+            'Audit: Force audit policy subcategory settings (Windows Vista or later) to override audit policy category settings' => {
+                :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\SCENoApplyLegacyAuditPolicy',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
             },
             #User rights mapping
             'Access Credential Manager as a trusted caller' => {
@@ -694,6 +695,11 @@ class SecurityPolicy
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
+            'Network access: Sharing and security model for local accounts' => {
+                :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\ForceGuest',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
             'System cryptography: Use FIPS compliant algorithms for encryption, hashing, and signing' => {
                 :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\FIPSAlgorithmPolicy\Enabled',
                 :reg_type => '4',
@@ -709,13 +715,18 @@ class SecurityPolicy
                 :reg_type => '3',
                 :policy_type => 'Registry Values',
             },
+            'Accounts: Block Microsoft accounts' => {
+                :name => 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\NoConnectedUser',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
             'Accounts: Limit local account use of blank passwords to console logon only' => {
                 :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\LimitBlankPasswordUse',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
             'Network security: All Local System to use computer identity for NTLM' => {
-                :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0\NTLMMinClientSec',
+                :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\UseMachineId',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
@@ -740,9 +751,9 @@ class SecurityPolicy
                 :policy_type => 'Registry Values',
             },
             'Devices: Prevent users from installing printer drivers' => {
-              :name => 'MACHINE\System\CurrentControlSet\Control\Print\Providers\LanMan Print Services\Servers\AddPrinterDrivers',
-              :reg_type => '4',
-              :policy_type => 'Registry Values',
+                :name => 'MACHINE\System\CurrentControlSet\Control\Print\Providers\LanMan Print Services\Servers\AddPrinterDrivers',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
             },
             'Devices: Allow undock without having to log on' => {
                 :name => 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\UndockWithoutLogon',
@@ -793,11 +804,6 @@ class SecurityPolicy
                 :name => 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\MaxDevicePasswordFailedAttempts',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
-            },
-            'ForceGuest' => {
-                :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\ForceGuest',
-                :policy_type => "Registry Values",
-                :reg_type => "4"
             },
             'Microsoft network client: Digitally sign communications (always)' => {
                 :name => 'MACHINE\System\CurrentControlSet\Services\LanmanWorkstation\Parameters\RequireSecuritySignature',
@@ -880,81 +886,55 @@ class SecurityPolicy
                 :policy_type => 'Registry Values',
             },
             'Network security: Do not store LAN Manager hash value on next password change' => {
-                :name           => 'MACHINE\System\CurrentControlSet\Control\Lsa\NoLMHash',
-                :reg_type       => '4',
-                :policy_type    => 'Registry Values',
-                :data_type      => :boolean,
+                :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\NoLMHash',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
             },
             'Network security: LAN Manager authentication level' => {
-                :name           => 'MACHINE\System\CurrentControlSet\Control\Lsa\LmCompatibilityLevel',
-                :reg_type       => '4',
-                :policy_type    => 'Registry Values',
+                :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\LmCompatibilityLevel',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
             },
-            "MACHINE\\System\\CurrentControlSet\\Control\\Lsa\\MSV1_0\\NTLMMinServerSec" => {
-                :name => "MACHINE\\System\\CurrentControlSet\\Control\\Lsa\\MSV1_0\\NTLMMinServerSec",
+            'Network security: Minimum session security for NTLM SSP based (including secure RPC) clients' => {
+                :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0\NTLMMinClientSec',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Network security: Minimum session security for NTLM SSP based (including secure RPC) servers' => {
+                :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0\NTLMMinServerSec',
+                :reg_type => '4',
+                :policy_type => 'Registry Values',
+            },
+            'Network security: LDAP client signing requirements' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\LDAP\LDAPClientIntegrity',
+                :reg_type => "4",
+                :policy_type => "Registry Values",
+            },
+            'System objects: Require case insensitivity for non-Windows subsystems' => {
+                :name => 'MACHINE\System\CurrentControlSet\Control\Session Manager\Kernel\ObCaseInsensitive',
                 :policy_type => "Registry Values",
                 :reg_type => "4"
             },
-            "MACHINE\\System\\CurrentControlSet\\Control\\Lsa\\NoLMHash" => {
-                :name => "MACHINE\\System\\CurrentControlSet\\Control\\Lsa\\NoLMHash",
+            "System objects: Strengthen default permissions of internal system objects (e.g., Symbolic Links)" => {
+                :name => 'MACHINE\System\CurrentControlSet\Control\Session Manager\ProtectionMode',
                 :policy_type => "Registry Values",
                 :reg_type => "4"
             },
-            "MACHINE\\System\\CurrentControlSet\\Control\\Print\\Providers\\LanMan Print Services\\Servers\\AddPrinterDrivers" => {
-                :name => "MACHINE\\System\\CurrentControlSet\\Control\\Print\\Providers\\LanMan Print Services\\Servers\\AddPrinterDrivers",
-                :policy_type => "Registry Values",
-                :reg_type => "4"
-            },
-            "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\Kernel\\ObCaseInsensitive" => {
-                :name => "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\Kernel\\ObCaseInsensitive",
-                :policy_type => "Registry Values",
-                :reg_type => "4"
-            },
-            "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\Memory Management\\ClearPageFileAtShutdown" => {
-                :name => "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\Memory Management\\ClearPageFileAtShutdown",
-                :policy_type => "Registry Values",
-                :reg_type => "4"
-            },
-            "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\ProtectionMode" => {
-                :name => "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\ProtectionMode",
-                :policy_type => "Registry Values",
-                :reg_type => "4"
-            },
-            "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\SubSystems\\optional" => {
-                :name => "MACHINE\\System\\CurrentControlSet\\Control\\Session Manager\\SubSystems\\optional",
+            'System settings: Optional subsystems' => {
+                :name => 'MACHINE\System\CurrentControlSet\Control\Session Manager\SubSystems\optional',
                 :policy_type => "Registry Values",
                 :reg_type => "7"
             },
-            "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\AutoDisconnect" => {
-                :name => "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\AutoDisconnect",
+            'Shutdown: Clear virtual memory pagefile' => {
+                :name => 'MACHINE\System\CurrentControlSet\Control\Session Manager\Memory Management\ClearPageFileAtShutdown',
                 :policy_type => "Registry Values",
                 :reg_type => "4"
             },
-            "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\EnableForcedLogOff" => {
-                :name => "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\EnableForcedLogOff",
+            'Microsoft network server: Amount of idle time required before suspending session' => {
+                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\AutoDisconnect',
                 :policy_type => "Registry Values",
                 :reg_type => "4"
             },
-            "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\EnableSecuritySignature" => {
-                :name => "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\EnableSecuritySignature",
-                :policy_type => "Registry Values",
-                :reg_type => "4"
-            },
-            "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\RequireSecuritySignature" => {
-                :name => "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\RequireSecuritySignature",
-                :policy_type => "Registry Values",
-                :reg_type => "4"
-            },
-            "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\RestrictNullSessAccess" => {
-                :name => "MACHINE\\System\\CurrentControlSet\\Services\\LanManServer\\Parameters\\RestrictNullSessAccess",
-                :policy_type => "Registry Values",
-                :reg_type => "4"
-            },
-            "MACHINE\\System\\CurrentControlSet\\Services\\LDAP\\LDAPClientIntegrity" => {
-                :name => "MACHINE\\System\\CurrentControlSet\\Services\\LDAP\\LDAPClientIntegrity",
-                :policy_type => "Registry Values",
-                :reg_type => "4"
-            }
 
         }
     end
