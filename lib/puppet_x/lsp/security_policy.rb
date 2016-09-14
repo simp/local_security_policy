@@ -615,7 +615,7 @@ class SecurityPolicy
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
-            'User Account Control: Only elevate UIAccess applicaitons that are installed in secure locations' => {
+            'User Account Control: Only elevate UIAccess applications that are installed in secure locations' => {
                 :name => 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\EnableSecureUIAPaths',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
@@ -630,7 +630,7 @@ class SecurityPolicy
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
-            'User Account Control: Admin Approval Mode for the built-in Administrator account' => {
+            'User Account Control: Admin Approval Mode for the Built-in Administrator account' => {
                 :name => 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\FilterAdministratorToken',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
@@ -915,7 +915,7 @@ class SecurityPolicy
                 :policy_type => "Registry Values",
                 :reg_type => "4"
             },
-            "System objects: Strengthen default permissions of internal system objects (e.g., Symbolic Links)" => {
+            'System objects: Strengthen default permissions of internal system objects' => {
                 :name => 'MACHINE\System\CurrentControlSet\Control\Session Manager\ProtectionMode',
                 :policy_type => "Registry Values",
                 :reg_type => "4"
