@@ -755,11 +755,6 @@ class SecurityPolicy
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
-            'Devices: Allow undock without having to log on' => {
-                :name => 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\UndockWithoutLogon',
-                :reg_type => '4',
-                :policy_type => 'Registry Values',
-            },
             'Domain member: Digitally encrypt or sign secure channel data (always)' => {
                 :name => 'MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters\RequireSignOrSeal',
                 :reg_type => '4',
@@ -855,11 +850,6 @@ class SecurityPolicy
                 :reg_type => '7',
                 :policy_type => 'Registry Values',
             },
-            'Network access: Let Everyone permissions apply to anonymous users' => {
-                :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\EveryoneIncludesAnonymous',
-                :reg_type => '4',
-                :policy_type => 'Registry Values',
-            },
             'Network access: Do not allow anonymous enumeration of SAM accounts and shares' => {
                 :name => 'MACHINE\System\CurrentControlSet\Control\Lsa\RestrictAnonymous',
                 :reg_type => '4',
@@ -872,11 +862,6 @@ class SecurityPolicy
             },
             'Network access: Remotely accessible registry paths and sub-paths' => {
                 :name => 'MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths\Machine',
-                :reg_type => '7',
-                :policy_type => 'Registry Values',
-            },
-            'Network access: Remotely accessible registry paths' => {
-                :name => 'MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedExactPaths\Machine',
                 :reg_type => '7',
                 :policy_type => 'Registry Values',
             },
@@ -927,11 +912,6 @@ class SecurityPolicy
             },
             'Shutdown: Clear virtual memory pagefile' => {
                 :name => 'MACHINE\System\CurrentControlSet\Control\Session Manager\Memory Management\ClearPageFileAtShutdown',
-                :policy_type => "Registry Values",
-                :reg_type => "4"
-            },
-            'Microsoft network server: Amount of idle time required before suspending session' => {
-                :name => 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\AutoDisconnect',
                 :policy_type => "Registry Values",
                 :reg_type => "4"
             },
