@@ -915,7 +915,7 @@ class SecurityPolicy
                 :policy_type => "Registry Values",
                 :reg_type => "4"
             },
-            'System objects: Strengthen default permissions of internal system objects' => {
+            'System objects: Strengthen default permissions of internal system objects (e.g., Symbolic Links)' => {
                 :name => 'MACHINE\System\CurrentControlSet\Control\Session Manager\ProtectionMode',
                 :policy_type => "Registry Values",
                 :reg_type => "4"
