@@ -731,8 +731,8 @@ class SecurityPolicy
                 :policy_type => 'Registry Values',
             },
             'Network access: Remotely accessible registry paths' => {
-                :name => 'MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths\Machine',
-                :reg_type => '4',
+                :name => 'MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedExactPaths\Machine',
+                :reg_type => '7',
                 :policy_type => 'Registry Values',
             },
             'Devices: Restrict CD-ROM access to locally logged-on user only' => {
