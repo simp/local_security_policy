@@ -731,7 +731,7 @@ class SecurityPolicy
                 :policy_type => 'Registry Values',
             },
             'Network access: Remotely accessible registry paths' => {
-                :name => 'MACHINE\System\Current\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedExactPaths\Machine',
+                :name => 'MACHINE\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths\Machine',
                 :reg_type => '4',
                 :policy_type => 'Registry Values',
             },
