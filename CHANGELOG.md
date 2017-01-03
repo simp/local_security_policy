@@ -1,3 +1,7 @@
+###[0.6.1]
+ * Updates for typos in settings and official policy names - Gerben Welter - #19
+ * Support old-style file-loading - Jordan Wesolowski - #24
+
 ###[0.6.0] - Adam Yohrling
  * Added new Network security settings, Typo Fixes, Idempotency - #18
 
