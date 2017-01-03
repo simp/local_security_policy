@@ -79,6 +79,7 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
       Access this computer from the network
       Account lockout duration
       Account lockout threshold
+      Accounts: Block Microsoft accounts
       Accounts: Limit local account use of blank passwords to console logon only
       Accounts: Rename administrator account
       Accounts: Rename guest account
@@ -90,17 +91,17 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
       Allow log on through Remote Desktop Services
       Audit account logon events
       Audit account management
+      Audit: Audit the access of global system objects
+      Audit: Audit the use of Backup and Restore privilege
       Audit directory service access
+      Audit: Force audit policy subcategory settings (Windows Vista or later) to override audit policy category settings
       Audit logon events
       Audit object access
       Audit policy change
       Audit privilege use
       Audit process tracking
-      Audit system events
-      Audit: Audit the access of global system objects
-      Audit: Audit the use of Backup and Restore priviliege
       Audit: Shut down system immediately if unable to log security audits
-      AuditProcessTracking
+      Audit system events
       Back up files and directories
       Bypass traverse checking
       Change the system time
@@ -116,8 +117,8 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
       Deny log on as a service
       Deny log on locally
       Deny log on through Remote Desktop Services
-      Devices: Allow undock without having to log on
       Devices: Allowed to format and eject removable media
+      Devices: Allow undock without having to log on
       Devices: Prevent users from installing printer drivers
       Devices: Restrict CD-ROM access to locally logged-on user only
       Devices: Restrict floppy access to locally logged-on user only
@@ -127,12 +128,10 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
       Domain member: Disable machine account password changes
       Domain member: Maximum machine account password age
       Domain member: Require strong (Windows 2000 or later) session key
-      Enable computer and user accounts to be trusted for delegation
       EnableAdminAccount
-      EnableGuestAccount
+      Enable computer and user accounts to be trusted for delegation
       Enforce password history
       Force shutdown from a remote system
-      ForceLogoffWhenHourExpire
       Generate security audits
       Impersonate a client after authentication
       Increase a process working set
@@ -149,38 +148,25 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
       Interactive logon: Require Domain Controller authentication to unlock workstation
       Interactive logon: Require smart card
       Interactive logon: Smart card removal behavior
-      LSAAnonymousNameLookup
       Load and unload device drivers
       Lock pages in memory
       Log on as a batch job
       Log on as a service
-      MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0\NTLMMinServerSec
-      MACHINE\System\CurrentControlSet\Control\Lsa\NoLMHash
-      MACHINE\System\CurrentControlSet\Control\Print\Providers\LanMan Print Services\Servers\AddPrinterDrivers
-      MACHINE\System\CurrentControlSet\Control\Session Manager\Kernel\ObCaseInsensitive
-      MACHINE\System\CurrentControlSet\Control\Session Manager\Memory Management\ClearPageFileAtShutdown
-      MACHINE\System\CurrentControlSet\Control\Session Manager\ProtectionMode
-      MACHINE\System\CurrentControlSet\Control\Session Manager\SubSystems\optional
-      MACHINE\System\CurrentControlSet\Services\LDAP\LDAPClientIntegrity
-      MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\AutoDisconnect
-      MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\EnableForcedLogOff
-      MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\EnableSecuritySignature
-      MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\RequireSecuritySignature
-      MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\RestrictNullSessAccess
       Manage auditing and security log
       Maximum password age
       Microsoft network client: Digitally sign communications (always)
-      Microsoft network client: Microsoft network client: Digitally sign communications (if server agrees)
+      Microsoft network client: Digitally sign communications (if server agrees)
       Microsoft network client: Send unencrypted password to third-party SMB servers
       Microsoft network server: Amount of idle time required before suspending session
+      Microsoft network server: Digitally sign communications (always)
       Microsoft network server: Digitally sign communications (if client agrees)
       Microsoft network server: Disconnect clients when logon hours expire
-      Microsoft network server: Microsoft network server: Digitally sign communications (always)
       Microsoft network server: Server SPN target name validation level
       Minimum password age
       Minimum password length
       Modify an object label
       Modify firmware environment values
+      Network access: Allow anonymous SID/name translation
       Network access: Do not allow anonymous enumeration of SAM accounts
       Network access: Do not allow anonymous enumeration of SAM accounts and shares
       Network access: Do not allow storage of passwords and credentials for network authentication
@@ -190,34 +176,43 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
       Network access: Remotely accessible registry paths and sub-paths
       Network access: Restrict anonymous access to Named Pipes and Shares
       Network access: Shares that can be accessed anonymously
-      Network security: All Local System to use computer identiry for NTLM
+      Network access: Sharing and security model for local accounts
+      Network security: All Local System to use computer identity for NTLM
       Network security: Do not store LAN Manager hash value on next password change
+      Network security: Force logoff when logon hours expire
       Network security: LAN Manager authentication level
+      Network security: LDAP client signing requirements
+      Network security: Minimum session security for NTLM SSP based (including secure RPC) clients
+      Network security: Minimum session security for NTLM SSP based (including secure RPC) servers
       Password must meet complexity requirements
       Perform volume maintenance tasks
       Profile single process
       Profile system performance
-      Recovery console: Allow automatic adminstrative logon
+      Recovery console: Allow automatic administrative logon
       Recovery console: Allow floppy copy and access to all drives and all folders
       Remove computer from docking station
       Replace a process level token
       Reset account lockout counter after
       Restore files and directories
-      Shut down the system
       Shutdown: Allow system to be shut down without having to log on
+      Shutdown: Clear virtual memory pagefile
+      Shut down the system
       Store passwords using reversible encryption
       Synchronize directory service data
       System cryptography: Force strong key protection for user keys stored on the computer
       System cryptography: Use FIPS compliant algorithms for encryption, hashing, and signing
+      System objects: Require case insensitivity for non-Windows subsystems
+      System objects: Strengthen default permissions of internal system objects (e.g., Symbolic Links)
+      System settings: Optional subsystems
       System settings: Use Certificate Rules on Windows Executables for Software Restriction Policies
       Take ownership of files or other objects
-      User Account Control: Admin Approval Mode for the built-in Administrator account
+      User Account Control: Admin Approval Mode for the Built-in Administrator account
       User Account Control: Allow UIAccess applications to prompt for elevation without using the secure desktop
       User Account Control: Behavior of the elevation prompt for administrators in Admin Approval Mode
       User Account Control: Behavior of the elevation prompt for standard users
       User Account Control: Detect application installations and prompt for elevation
-      User Account Control: Only elevate UIAccess applicaitons that are installed in secure locations
       User Account Control: Only elevate executables that are signed and validated
+      User Account Control: Only elevate UIAccess applications that are installed in secure locations
       User Account Control: Run all administrators in Admin Approval Mode
       User Account Control: Switch to the secure desktop when prompting for elevation
       User Account Control: Virtualize file and registry write failures to per-user locations
