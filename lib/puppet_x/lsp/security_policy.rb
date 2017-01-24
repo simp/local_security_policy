@@ -3,7 +3,7 @@ require 'puppet/provider'
 
 class SecurityPolicy
     attr_reader :wmic_cmd
-    EVENT_TYPES = ["Success,Failure", "Success", "Failure", "No Auditing", 0, 1, 2, 3]
+    EVENT_TYPES = ["Success,Failure", "Success", "Failure", "No auditing", 0, 1, 2, 3]
 
     def initialize
         # suppose to make an instance method for wmic
