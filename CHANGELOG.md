@@ -1,3 +1,7 @@
+###[0.6.2]
+ * Bug fix for 'No auditing' case issue - Jordan Wesolowski - #26
+ * Fix issue where WMIC was timing out or crashing on systems joined to a domain - Thomas Linkin - #28
+
 ###[0.6.1]
  * Updates for typos in settings and official policy names - Gerben Welter - #19
  * Support old-style file-loading - Jordan Wesolowski - #24
