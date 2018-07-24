@@ -310,6 +310,10 @@ class SecurityPolicy
                 :policy_type => 'System Access',
                 :data_type => :quoted_string
             },
+            'Accounts: Administrator account status' => {
+                :name => 'EnableAdminAccount',
+                :policy_type => 'System Access',
+            },
             'Accounts: Rename guest account' => {
                 :name => 'NewGuestName',
                 :policy_type => 'System Access',
