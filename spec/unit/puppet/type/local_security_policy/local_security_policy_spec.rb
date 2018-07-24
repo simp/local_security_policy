@@ -34,5 +34,17 @@ describe Puppet::Type.type(:local_security_policy) do
               :policy_value   => 'Success,Failure',
           )}.to raise_error(Puppet::ResourceError)
     end
+
+    it 'raises an error with with bad value for Administrator account status' do
+      expect {
+        Puppet::Type.type(:local_security_policy).new(
+          :name           => 'Administrator account status',
+          :ensure         => present,
+          :policy_setting => 'EnableAdminAccount',
+          :policy_type    => 'System Access',
+          :policy_value   => '0'
+        )
+      }.to raise_error(Puppet::ResourceError)
+    end
   end
 end
