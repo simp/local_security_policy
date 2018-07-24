@@ -1,3 +1,6 @@
+###[0.6.3] - naeem98
+ * Added 'Accounts: Administrator account status' setting for CIS 2.3.1.1
+
 ###[0.6.2]
  * Bug fix for 'No auditing' case issue - Jordan Wesolowski - #26
  * Fix issue where WMIC was timing out or crashing on systems joined to a domain - Thomas Linkin - #28
