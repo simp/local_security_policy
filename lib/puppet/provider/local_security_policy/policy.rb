@@ -1,10 +1,12 @@
-#encoding: UTF-8
+# encoding: UTF-8
+# frozen_string_literal: true
+
 require 'fileutils'
 
 begin
-  require "puppet_x/twp/inifile"
-  require "puppet_x/lsp/security_policy"
-rescue LoadError => detail
+  require 'puppet_x/twp/inifile'
+  require 'puppet_x/lsp/security_policy'
+rescue LoadError => _detail
   require 'pathname' # JJM WORK_AROUND #14073
   mod = Puppet::Module.find('local_security_policy', Puppet[:environment].to_s)
   if mod
@@ -25,14 +27,14 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
   # TODO Add in registry value translation (ex: 1=enable 0=disable)
   # TODO Implement self.post_resource_eval (need to collect all resource updates the run secedit to make one call)
   # limit access to windows hosts only
-  confine :operatingsystem => :windows
+  confine operatingsystem: :windows
   # limit access to systems with these commands since this is the tools we need
-  commands :wmic => 'wmic', :secedit => 'secedit'
+  commands wmic: 'wmic', secedit: 'secedit'
 
   mk_resource_methods
 
   # export the policy settings to the specified file and return the filename
-  def self.export_policy_settings(inffile=nil)
+  def self.export_policy_settings(inffile = nil)
     inffile ||= temp_file
     secedit(['/export', '/cfg', inffile, '/quiet'])
     inffile
@@ -40,14 +42,14 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
 
   # export and then read the policy settings from a file into a inifile object
   # caches the IniFile object during the puppet run
-  def self.read_policy_settings(inffile=nil)
+  def self.read_policy_settings(inffile = nil)
     inffile ||= temp_file
     unless @file_object
       export_policy_settings(inffile)
       File.open inffile, 'r:IBM437' do |file|
         # remove /r/n and remove the BOM
-        inffile_content = file.read.force_encoding('utf-16le').encode('utf-8', :universal_newline => true).gsub("\xEF\xBB\xBF", '')
-        @file_object ||= PuppetX::IniFile.new(:content => inffile_content)
+        inffile_content = file.read.force_encoding('utf-16le').encode('utf-8', universal_newline: true).delete("\xEF\xBB\xBF")
+        @file_object ||= PuppetX::IniFile.new(content: inffile_content)
       end
     end
     @file_object
@@ -59,8 +61,8 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
   def self.fixup_value(value, type)
     value = value.to_s.strip
     case type
-      when :quoted_string
-        value = "\"#{value}\""
+    when :quoted_string
+      value = "\"#{value}\""
     end
     value
   end
@@ -81,11 +83,11 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
         ensure_value = parameter_value.nil? ? :absent : :present
         policy_desc, policy_values = SecurityPolicy.find_mapping_from_policy_name(parameter_name)
         policy_hash = {
-            :name => policy_desc,
-            :ensure => ensure_value,
-            :policy_type => section ,
-            :policy_setting => parameter_name,
-            :policy_value => fixup_value(parameter_value, policy_values[:data_type])
+          name: policy_desc,
+          ensure: ensure_value,
+          policy_type: section,
+          policy_setting: parameter_name,
+          policy_value: fixup_value(parameter_value, policy_values[:data_type]),
         }
         inst = new(policy_hash)
         settings << inst
@@ -110,7 +112,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
     @property_hash = resource.to_hash
   end
 
-  def initialize(value={})
+  def initialize(value = {})
     super(value)
     @property_flush = {}
   end
@@ -123,7 +125,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
   # this is currently not implemented correctly on purpose until we can figure out how to safely remove
   def destroy
     @property_hash[:ensure] = :absent
-    #Destroy not an option for now.  LSP Settings should be set to something.
+    # Destroy not an option for now.  LSP Settings should be set to something.
     # we need some default destroy values in the mappings so we know ahead of time what to put unless the user supplies
     # but this would just ensure a value the setting should go back to
   end
@@ -131,7 +133,7 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
   def self.prefetch(resources)
     policies = instances
     resources.keys.each do |name|
-      if found_pol = policies.find { |pol| pol.name == name }
+      if found_pol = policies.find { |pol| pol.name == name } # rubocop:disable Lint/AssignmentInCondition
         resources[name].provider = found_pol
       end
     end
@@ -158,28 +160,27 @@ Puppet::Type.type(:local_security_policy).provide(:policy) do
   # writes out one policy at a time using the InfFile Class and secedit
   def write_policy_to_system(policy_hash)
     time = Time.now
-    time = time.strftime("%Y%m%d%H%M%S")
+    time = time.strftime('%Y%m%d%H%M%S')
     infout = "c:\\windows\\temp\\infimport-#{time}.inf"
     sdbout = "c:\\windows\\temp\\sdbimport-#{time}.inf"
-    #logout = "c:\\windows\\temp\\logout-#{time}.inf"
-    status = nil
+    # logout = "c:\\windows\\temp\\logout-#{time}.inf"
     begin
       # read the system state into the inifile object for easy variable setting
       inf = PuppetX::IniFile.new
       # these sections need to be here by default
-      inf["Version"] = {"signature"=>"$CHICAGO$", "Revision"=>1}
-      inf["Unicode"] = {"Unicode"=>"yes"}
+      inf['Version'] = { 'signature' => '$CHICAGO$', 'Revision' => 1 }
+      inf['Unicode'] = { 'Unicode' => 'yes' }
       section = policy_hash[:policy_type]
-      section_value = {policy_hash[:policy_setting] => policy_hash[:policy_value]}
+      section_value = { policy_hash[:policy_setting] => policy_hash[:policy_value] }
       # we can utilize the IniFile class to write out the data in ini format
       inf[section] = section_value
-      inf.write(:filename => infout, :encoding => 'utf-8')
-      secedit(['/configure', '/db', sdbout, '/cfg',infout])
+      inf.write(filename: infout, encoding: 'utf-8')
+      secedit(['/configure', '/db', sdbout, '/cfg', infout])
     ensure
       FileUtils.rm_f(temp_file)
       FileUtils.rm_f(infout)
       FileUtils.rm_f(sdbout)
-      #FileUtils.rm_f(logout)
+      # FileUtils.rm_f(logout)
     end
   end
 end
