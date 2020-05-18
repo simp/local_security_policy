@@ -20,6 +20,9 @@ class SecurityPolicy
                 # will not cache
                 wmic_cmd.execute(args).force_encoding('utf-16le').encode('utf-8', :universal_newline => true).gsub("\xEF\xBB\xBF", '')
         end
+    rescue
+        warn "local_security_policy: wmic: encoding failed"
+        wmic_cmd.execute(args)
     end
 
     # collect all the local accounts using wmic
@@ -27,8 +30,7 @@ class SecurityPolicy
         ary = []
         ["useraccount","group"].each do |lu|
             wmic([lu, 'where', "(domain=\"#{ENV["COMPUTERNAME"]}\")", 'get', 'name,sid', '/format:csv']).split("\n").each do |line|
-                next if line =~ /Node/
-                if line.include? ","
+                if line.include? "#{ENV["COMPUTERNAME"]},"
                     ary << line.strip.split(",")
                 end
             end
