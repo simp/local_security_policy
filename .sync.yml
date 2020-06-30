@@ -5,9 +5,48 @@ Gemfile:
   optional:
     ':development':
       - gem: pry-byebug
+    ':acceptance':
+      - gem: beaker
+      - gem: beaker-rspec
+      - gem: beaker-windows
+      - gem: beaker-puppet_install_helper
+      - gem: beaker-module_install_helper
+      - gem: beaker-vagrant
+      - gem: vagrant-wrapper
+      - gem: net-ssh
+        version: '~> 5.2'
 .rubocop.yml:
   profiles:
     strict:
       configs:
         AllCops:
           TargetRubyVersion: '2.4'
+.gitlab-ci.yml:
+  custom:
+    ruby_versions:
+      2.5.7:
+        tags:
+          - docker
+      2.4.5:
+        tags:
+          - docker
+    # Due to bugs in the PDK template, the following:
+    # beaker:
+    #   variables: {}
+    #   tags:
+    #     - beaker
+    # needs to be written like this:
+    custom_stages:
+      - beaker
+    custom_jobs:
+      beaker:
+        stage: beaker
+        variables:
+          DOCKER_DRIVER: 'overlay2'
+        services:
+          - docker:dind
+        script:
+          - bundle install --with system_tests
+          - bundle exec rake beaker
+        tags:
+          - beaker
