@@ -29,4 +29,38 @@ describe 'local_security_policy' do
       end
     end
   end
+
+  context 'rename guest account' do
+    let(:manifest) do
+      <<~END
+          local_security_policy { 'Accounts: Rename guest account':
+            ensure       => present,
+            policy_value => '"lsp_guest"',
+          }
+      END
+    end
+
+    it 'is expected to apply with no errors' do
+      # Run twice to test idempotency
+      apply_manifest(manifest, 'catch_failures' => true)
+      apply_manifest(manifest, 'catch_changes' => true)
+    end
+  end
+
+  context 'rename administrator account' do
+    let(:manifest) do
+      <<~END
+          local_security_policy { 'Accounts: Rename administrator account':
+            ensure       => present,
+            policy_value => '"lsp_admin"',
+          }
+      END
+    end
+
+    it 'is expected to apply with no errors' do
+      # Run twice to test idempotency
+      apply_manifest(manifest, 'catch_failures' => true)
+      apply_manifest(manifest, 'catch_changes' => true)
+    end
+  end
 end

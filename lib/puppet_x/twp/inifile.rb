@@ -557,7 +557,9 @@ module PuppetX # rubocop:disable Style/ClassAndModuleChildren
         property.strip!
         value.strip!
 
-        self.value = Regexp.last_match(1) if value.match?(%r{\A"(.*)(?<!\\)"\z}m)
+        %r{\A"(.*)(?<!\\)"\z}m.match(value) do |m|
+          self.value = m[1]
+        end
 
         section[property] = typecast(value)
 
