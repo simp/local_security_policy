@@ -1,47 +1,55 @@
-require 'spec_helper'
-require "puppet_x/lsp/security_policy"
+# frozen_string_literal: true
 
+require 'spec_helper'
+require 'puppet_x/lsp/security_policy'
+
+# rubocop:disable RSpec/SubjectStub,RSpec/NamedSubject,RSpec/AnyInstance
 describe 'SecurityPolicy' do
+  include PuppetlabsSpec::Fixtures
+
   subject { SecurityPolicy }
-  before :all do
-    Puppet::Util.stubs(:which).with("wmic").returns("c:\\tools\\wmic")
-    Puppet::Util.stubs(:which).with("secedit").returns("c:\\tools\\secedit")
-  end
-  before :each do
+
+  before(:each) do
+    ENV['COMPUTERNAME'] = 'testsystem'
+    allow(Puppet::Util).to receive(:which).with('wmic').and_return('c:\\tools\\wmic')
+    allow(Puppet::Util).to receive(:which).with('secedit').and_return('c:\\tools\\secedit')
+
     infout = StringIO.new
     sdbout = StringIO.new
     allow(Tempfile).to receive(:new).with('infimport').and_return(infout)
     allow(Tempfile).to receive(:new).with('sdbimport').and_return(sdbout)
     allow(File).to receive(:file?).with(secdata).and_return(true)
     # the below mock seems to be required or rspec complains
-    allow(File).to receive(:file?).with(/facter/).and_return(true)
+    allow(File).to receive(:file?).with(%r{facter|lsb_release}).and_return(true)
     allow(subject).to receive(:temp_file).and_return(secdata)
-    security_policy.stubs(:wmic).with([ "useraccount", "get", "name,sid", "/format:csv"]).returns(File.read(userdata))
-    security_policy.stubs(:wmic).with([ "group", "get", "name,sid", "/format:csv"]).returns(File.read(groupdata))
-    allow_any_instance_of(SecurityPolicy).to receive(:wmic).with([ "useraccount", "get", "name,sid", "/format:csv"]).and_return(userdata)
-    allow_any_instance_of(SecurityPolicy).to receive(:wmic).with([ "group", "get", "name,sid", "/format:csv"]).and_return(groupdata)
+    allow(security_policy).to receive(:wmic).with(['useraccount', 'get', 'name,sid', '/format:csv']).and_return(userdata)
+    allow(security_policy).to receive(:wmic).with(['group', 'get', 'name,sid', '/format:csv']).and_return(groupdata)
+    allow_any_instance_of(SecurityPolicy).to receive(:wmic).with(['useraccount', 'where', '(domain="testsystem")', 'get', 'name,sid', '/format:csv']).and_return(userdata)
+    allow_any_instance_of(SecurityPolicy).to receive(:wmic).with(['group', 'where', '(domain="testsystem")', 'get', 'name,sid', '/format:csv']).and_return(groupdata)
 
-    subject.stubs(:secedit).with(['/configure', '/db', 'sdbout', '/cfg', 'infout', '/quiet'])
-    subject.stubs(:secedit).with(['/export', '/cfg', secdata, '/quiet'])
+    allow(subject).to receive(:secedit).with(['/configure', '/db', 'sdbout', '/cfg', 'infout', '/quiet']).and_return(true)
+    allow(subject).to receive(:secedit).with(['/export', '/cfg', secdata, '/quiet']).and_return(true)
   end
 
   let(:secdata) do
-    File.join(fixtures_path, 'unit', 'secedit.inf')
+    my_fixture(File.join('..', 'secedit.inf'))
   end
 
   let(:groupdata) do
-    File.join(fixtures_path, 'unit', 'group.txt')
+    file = my_fixture(File.join('..', 'group.txt'))
+    File.open(file, 'r') { |f| f.read.encode('utf-8', universal_newline: true).delete("\xEF\xBB\xBF") }
   end
 
   let(:userdata) do
-    File.join(fixtures_path, 'unit', 'useraccount.txt')
+    file = my_fixture(File.join('..', 'useraccount.txt'))
+    File.open(file, 'r') { |f| f.read.encode('utf-8', universal_newline: true).delete("\xEF\xBB\xBF") }
   end
 
-  let(:security_policy){
+  let(:security_policy) do
     SecurityPolicy.new
-  }
+  end
 
-  it 'should return builtin accounts' do
+  it 'returns builtin accounts' do
     # we just want to check that this is an array within an array that has 3 elements in each element
     expect(security_policy.builtin_accounts.count).to be > 50
     expect(security_policy.builtin_accounts.first.count).to eq(3)
@@ -61,70 +69,70 @@ describe 'SecurityPolicy' do
     expect(a.first.count).to eq(3)
   end
 
-  it 'should return user' do
-    expect(security_policy.sid_to_user("S-1-5-32-556")).to eq('Network Configuration Operators')
-    expect(security_policy.sid_to_user('*S-1-5-80-0')).to eq("NT_SERVICE\\ALL_SERVICES")
+  it 'returns user' do
+    expect(security_policy.sid_to_user('S-1-5-32-556')).to eq('Network Configuration Operators')
+    expect(security_policy.sid_to_user('*S-1-5-80-0')).to eq('NT_SERVICE\\ALL_SERVICES')
   end
 
-  it 'should return sid when user is not found' do
+  it 'returns sid when user is not found' do
     expect(security_policy.user_to_sid('*S-11-5-80-0')).to eq('*S-11-5-80-0')
   end
 
-  it 'should return sid' do
-    expect(security_policy.user_to_sid("Network Configuration Operators")).to eq('*S-1-5-32-556')
-    expect(security_policy.user_to_sid("NT_SERVICE\\ALL_SERVICES")).to eq('*S-1-5-80-0')
+  it 'returns sid' do
+    expect(security_policy.user_to_sid('Network Configuration Operators')).to eq('*S-1-5-32-556')
+    expect(security_policy.user_to_sid('NT_SERVICE\\ALL_SERVICES')).to eq('*S-1-5-80-0')
   end
 
-  it 'should return user when sid is not found' do
-    expect(security_policy.user_to_sid("N_SERVICE\\ALL_SERVICES")).to eq("N_SERVICE\\ALL_SERVICES")
+  it 'returns user when sid is not found' do
+    expect(security_policy.user_to_sid('N_SERVICE\\ALL_SERVICES')).to eq('N_SERVICE\\ALL_SERVICES')
   end
-
 
   describe 'registry value' do
-    let(:resource) {
+    let(:resource) do
       Puppet::Type.type(:local_security_policy).new(
-          :name => 'Network access: Let Everyone permissions apply to anonymous users',
-          :ensure => 'present',
-          :policy_setting => 'MACHINE\System\CurrentControlSet\Control\Lsa\EveryoneIncludesAnonymous',
-          :policy_type    => 'Registry Values',
-          :policy_value   => '3')
-    }
-    it 'should convert a registry value' do
-      expect(subject.convert_registry_value("Network access: Let Everyone permissions apply to anonymous users",
+        name: 'Network access: Let Everyone permissions apply to anonymous users',
+        ensure: 'present',
+        policy_setting: 'MACHINE\System\CurrentControlSet\Control\Lsa\EveryoneIncludesAnonymous',
+        policy_type: 'Registry Values',
+        policy_value: '3',
+      )
+    end
+
+    it 'converts a registry value' do
+      expect(subject.convert_registry_value('Network access: Let Everyone permissions apply to anonymous users',
                                             3)).to eq('4,3')
     end
 
-    it 'should convert a policy right' do
+    it 'converts a policy right' do
       defined_policy = {
-          :name => 'Network access: Let Everyone permissions apply to anonymous users',
-          :ensure => 'present',
-          :policy_setting => 'MACHINE\System\CurrentControlSet\Control\Lsa\EveryoneIncludesAnonymous',
-          :policy_type    => 'Registry Values',
-          :policy_value   => '3'
+        name: 'Network access: Let Everyone permissions apply to anonymous users',
+        ensure: 'present',
+        policy_setting: 'MACHINE\System\CurrentControlSet\Control\Lsa\EveryoneIncludesAnonymous',
+        policy_type: 'Registry Values',
+        policy_value: '3',
       }
       hash = security_policy.convert_policy_hash(defined_policy)
       expect(hash[:policy_value]).to eq('4,3')
-
     end
   end
-  #
+
   describe 'privilege right' do
-    let(:resource) {
+    let(:resource) do
       Puppet::Type.type(:local_security_policy).new(
-          :name =>  'Access this computer from the network',
-          :ensure         => 'present',
-          :policy_setting => 'SeNetworkLogonRight',
-          :policy_type    => 'Privilege Rights',
-          :policy_value   => 'AUTHENTICATED_USERS,BUILTIN_ADMINISTRATORS'
+        name: 'Access this computer from the network',
+        ensure: 'present',
+        policy_setting: 'SeNetworkLogonRight',
+        policy_type: 'Privilege Rights',
+        policy_value: 'AUTHENTICATED_USERS,BUILTIN_ADMINISTRATORS',
       )
-    }
-    it 'should convert a privilege right to sids' do
+    end
+
+    it 'converts a privilege right to sids' do
       hash = security_policy.convert_policy_hash(resource)
       expect(hash[:policy_value]).to eq('*S-1-5-11,*S-1-5-32-544')
     end
-
   end
-  #
+
   # describe 'audit event' do
   #   let(:resource) {
   #     Puppet::Type.type(:local_security_policy).new(

@@ -1,48 +1,74 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Puppet::Type.type(:local_security_policy) do
   [:name].each do |param|
-    it "should have a #{param} parameter" do
+    it "has a #{param} parameter" do
       expect(Puppet::Type.type(:local_security_policy).attrtype(param)).to eq(:param)
     end
   end
 
-  [:policy_type,:ensure, :ensure, :policy_setting, :policy_value].each do |param|
-    it "should have an #{param} property" do
+  [:policy_type, :ensure, :ensure, :policy_setting, :policy_value].each do |param|
+    it "has a #{param} property" do
       expect(Puppet::Type.type(:local_security_policy).attrtype(param)).to eq(:property)
     end
   end
 
   describe 'test validation' do
-    it 'can create a registry value' do
+    it 'creates a registry value' do
       resource = Puppet::Type.type(:local_security_policy).new(
-          :name => 'Network access: Let Everyone permissions apply to anonymous users',
-          :ensure => 'present',
-          :policy_setting => 'MACHINE\System\CurrentControlSet\Control\Lsa\EveryoneIncludesAnonymous',
-          :policy_type    => 'Registry Values',
-          :policy_value   => '0')
+        name: 'Network access: Let Everyone permissions apply to anonymous users',
+        ensure: 'present',
+        policy_setting: 'MACHINE\System\CurrentControlSet\Control\Lsa\EveryoneIncludesAnonymous',
+        policy_type: 'Registry Values',
+        policy_value: '0',
+      )
       expect(resource[:policy_value]).to eq('4,0')
     end
 
+    it 'creates an event audit value' do
+      resource = Puppet::Type.type(:local_security_policy).new(
+        name: 'Audit account logon events',
+        ensure: 'present',
+        policy_setting: 'AuditAccountLogon',
+        policy_type: 'Event Audit',
+        policy_value: 'Success,Failure',
+      )
+      expect(resource[:ensure]).to eq(:present)
+    end
+
     it 'raises an error with bad policy event audit value' do
-      expect{
+      expect {
         Puppet::Type.type(:local_security_policy).new(
-              :name => 'Audit account logon events',
-              :ensure         => 'present',
-              :policy_setting => "AuditAccountLogon",
-              :policy_type    => "Event Audit",
-              :policy_value   => 'Success,Failure',
-          )}.to raise_error(Puppet::ResourceError)
+          name: 'Audit account logon events',
+          ensure: 'present',
+          policy_setting: 'AuditAccountLogon',
+          policy_type: 'Event Audit',
+          policy_value: 'Success.Failure', # Intentional typo '.' instead of ','
+        )
+      }.to raise_error(Puppet::ResourceError)
+    end
+
+    it 'creates a system access value' do
+      resource = Puppet::Type.type(:local_security_policy).new(
+        name: 'Accounts: Administrator account status',
+        ensure: 'present',
+        policy_setting: 'EnableAdminAccount',
+        policy_type: 'System Access',
+        policy_value: '0',
+      )
+      expect(resource[:ensure]).to eq(:present)
     end
 
     it 'raises an error with with bad value for Administrator account status' do
       expect {
         Puppet::Type.type(:local_security_policy).new(
-          :name           => 'Administrator account status',
-          :ensure         => present,
-          :policy_setting => 'EnableAdminAccount',
-          :policy_type    => 'System Access',
-          :policy_value   => '0'
+          name: 'Administrator account status',
+          ensure: 'present',
+          policy_setting: 'EnableAdminAccount',
+          policy_type: 'System Access',
+          policy_value: '0',
         )
       }.to raise_error(Puppet::ResourceError)
     end

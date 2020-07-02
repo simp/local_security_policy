@@ -1,9 +1,8 @@
-#!/usr/bin/env ruby
 # frozen_string_literal: true
 
 begin
   require 'puppet_x/lsp/security_policy'
-rescue LoadError => e
+rescue LoadError => _detail
   require 'pathname' # JJM WORK_AROUND #14073
   mod = Puppet::Module.find('local_security_policy', Puppet[:environment].to_s)
   if mod
@@ -19,7 +18,7 @@ Puppet::Type.newtype(:local_security_policy) do
 
   ensurable
 
-  newparam(:name, :namevar => true) do
+  newparam(:name, namevar: true) do
     desc 'Local Security Setting Name. What you see it the GUI.'
     validate do |value|
       raise ArgumentError, "Invalid Policy name: #{value}" unless SecurityPolicy.valid_lsp?(value)
@@ -33,37 +32,36 @@ Puppet::Type.newtype(:local_security_policy) do
       begin
         policy_hash = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
       rescue KeyError => e
-        fail(e.message)
+        raise(e.message)
       end
       policy_hash[:policy_type]
     end
     # uses the resource name to perform a lookup of the defined policy and returns the policy type
-    munge do |value|
+    munge do |_value|
       begin
         policy_hash = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
       rescue KeyError => e
-        fail(e.message)
+        raise(e.message)
       end
       policy_hash[:policy_type]
     end
   end
 
   newproperty(:policy_setting) do
-
     desc 'Local Security Policy Machine Name.  What OS knows it by.'
     defaultto do
       begin
         policy_hash = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
       rescue KeyError => e
-        fail(e.message)
+        raise(e.message)
       end
       policy_hash[:name]
     end
-    munge do |value|
+    munge do |_value|
       begin
         policy_hash = SecurityPolicy.find_mapping_from_policy_desc(resource[:name])
       rescue KeyError => e
-        fail(e.message)
+        raise(e.message)
       end
       policy_hash[:name]
     end
@@ -73,16 +71,16 @@ Puppet::Type.newtype(:local_security_policy) do
     desc 'Local Security Policy Setting Value'
     validate do |value|
       if value.nil? || value.empty?
-        raise ArgumentError, "Value cannot be nil or empty"
+        raise ArgumentError, 'Value cannot be nil or empty'
       end
-
       case resource[:policy_type].to_s
-      when 'Privilege Rights'
+      when 'Privilege Rights' # rubocop:disable Lint/EmptyWhen
         # maybe validate some sort of user?
       when 'Event Audit'
         raise ArgumentError, "Invalid Event type: #{value} for #{resource[:policy_value]}" unless SecurityPolicy::EVENT_TYPES.include?(value)
-      when 'Registry Values'
+      when 'Registry Values' # rubocop:disable Lint/EmptyWhen
         # maybe validate the value based on the datatype?
+
         # REG_NONE 0
         # REG_SZ 1
         # REG_EXPAND_SZ 2
@@ -103,7 +101,7 @@ Puppet::Type.newtype(:local_security_policy) do
     munge do |value|
       # need to convert policy values to designated types
       case resource[:policy_type].to_s
-      when 'Registry Values'
+      when 'Registry Values' # rubocop:disable Lint/EmptyWhen
         # secedit values sometimes look like : "1,\"4\""
       end
       SecurityPolicy.convert_policy_value(resource.to_hash, value)
