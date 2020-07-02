@@ -2,6 +2,7 @@
 stages:
   - syntax
   - unit
+  - beaker
 
 cache:
   paths:
@@ -25,6 +26,8 @@ syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore c
     - bundle exec rake syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop
   variables:
     PUPPET_GEM_VERSION: '~> 6'
+  tags:
+    - docker
 
 parallel_spec-Ruby 2.5.7-Puppet ~> 6:
   stage: unit
@@ -33,6 +36,8 @@ parallel_spec-Ruby 2.5.7-Puppet ~> 6:
     - bundle exec rake parallel_spec
   variables:
     PUPPET_GEM_VERSION: '~> 6'
+  tags:
+    - docker
 
 parallel_spec-Ruby 2.4.5-Puppet ~> 5:
   stage: unit
@@ -41,4 +46,18 @@ parallel_spec-Ruby 2.4.5-Puppet ~> 5:
     - bundle exec rake parallel_spec
   variables:
     PUPPET_GEM_VERSION: '~> 5'
+  tags:
+    - docker
+
+beaker:
+  stage: beaker
+  variables:
+    DOCKER_DRIVER: overlay2
+  services:
+  - docker:dind
+  script:
+  - bundle install --with system_tests
+  - bundle exec rake beaker
+  tags:
+  - beaker
 
