@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # frozen_string_literal: true
 
 require 'puppet/provider'
@@ -7,6 +6,7 @@ require 'puppet/provider'
 class SecurityPolicy
   attr_reader :wmic_cmd
   EVENT_TYPES = ['Success,Failure', 'Success', 'Failure', 'No auditing', 0, 1, 2, 3].freeze
+  REGISTRY_TYPES = [1, 3, 4, 7].freeze
 
   def initialize
     # suppose to make an instance method for wmic
@@ -243,7 +243,7 @@ class SecurityPolicy
 
   def self.convert_registry_value(name, value)
     value = value.to_s
-    return value if value.split(',').count > 1
+    return value if value.split(',').count > 1 && REGISTRY_TYPES.include?(value.split(',')[0].to_i)
     policy_hash = find_mapping_from_policy_desc(name)
     "#{policy_hash[:reg_type]},#{value}"
   end
