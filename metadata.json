@@ -29,8 +29,9 @@
     }
   ],
   "tags": [
-    "windows",
-    "security"
+    "security",
+    "policy",
+    "secedit"
   ],
   "pdk-version": "1.18.0",
   "template-url": "pdk-default#1.18.0",
