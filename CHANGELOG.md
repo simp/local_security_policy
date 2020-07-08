@@ -1,3 +1,7 @@
+## [0.7.1] - 2020-07-08
+### Changed
+- invalid metadata tags removed
+
 ## [0.7.0] - 2020-07-08
 ### Added
 - PDK support
