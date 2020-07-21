@@ -38,6 +38,7 @@ end
 
 RSpec.configure do |c|
   c.default_facts = default_facts
+  c.hiera_config = File.expand_path(File.join(__FILE__, '..', 'fixtures', 'hieradata', 'hiera.yaml'))
   c.before :each do
     # set to strictest setting for testing
     # by default Puppet runs at warning level
@@ -59,3 +60,15 @@ def ensure_module_defined(module_name)
 end
 
 # 'spec_overrides' from sync.yml will appear below this line
+def set_hieradata(hieradata)
+  RSpec.configure { |c| c.default_facts['custom_hiera'] = hieradata }
+end
+RSpec.configure do |c|
+  c.before :each do
+    if defined?(hieradata)
+      set_hieradata(hieradata.tr(':', '_'))
+    elsif defined?(class_name)
+      set_hieradata(class_name.tr(':', '_'))
+    end
+  end
+end

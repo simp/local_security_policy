@@ -33,6 +33,8 @@ RSpec/BeforeAfterAll:
     A necessary evil in acceptance testing.
   Exclude:
   - spec/acceptance/**/*.rb
+  - spec/spec_helper.rb
+  - spec/spec_helper_acceptance.rb
 RSpec/HookArgument:
   Description: Prefer explicit :each argument, matching existing module's style
   EnforcedStyle: each
@@ -79,6 +81,16 @@ Style/TrailingCommaInLiteral:
 Style/SymbolArray:
   Description: Using percent style obscures symbolic intent of array's contents.
   EnforcedStyle: brackets
+Style/AccessorMethodName:
+  Description: Do not prefix method names iwth `set_` or `get_`. Need to ignore non-ruby
+    class files
+  Exclude:
+  - spec/**/*
+Style/HashSyntax:
+  Description: Use the new Ruby 1.9 hash syntax. Rspec-puppet resources will fail
+    this cop.
+  Exclude:
+  - spec/classes/*
 RSpec/MessageSpies:
   EnforcedStyle: receive
 Style/Documentation:

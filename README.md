@@ -5,7 +5,7 @@ created by Paul Cannon at email paulscannon at gmail dot com
 forked and updated by Adam Yohrling at email aryohrling at gmail dot com
 
 ## Local_security_policy features
-Configure, local security policy (LSP) for windows servers.  
+Configure local security policy (LSP) for Windows servers.
 LSP is key to a baseline configuration of the following security features:
 ### Account Policy
   * Password Policy
@@ -17,10 +17,10 @@ LSP is key to a baseline configuration of the following security features:
   * Registry Values
 
 
-This module uses types and providers to list, update, validate settings
+This module uses types and providers to list, update, and validate settings.
 
 ## Use
-The title and name of the resources is exact match of what is in secedit GUI.  If you are uncertain of the setting name and values just user 'resource' to pipe them all into a file and make adjustments as necessary.
+The title and name of the resources is exact match of what is in secedit GUI.  If you are uncertain of the setting name and values just use `puppet resource local_security_policy` to pipe them all into a file and make adjustments as necessary.
 The block will look like this
 ```
 local_security_policy { 'Audit account logon events': <- Title / Name
@@ -33,11 +33,11 @@ local_security_policy { 'Audit account logon events': <- Title / Name
 
 
 ### Listing all settings
-Show all local_security_policy resources available on server
+Show all `local_security_policy` resources available on server
 ```
 puppet resource local_security_policy
 ```
-Show a single local_security_policy resources available on server
+Show a single `local_security_policy` resources available on server
 ```
 puppet resource local_security_policy 'Maximum password age'
 ```
@@ -220,8 +220,8 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
 
 
 ## How this works
-The local_security_policy works by using `secedit /export` to export a list of currently set policies.  The module will then
-take the user defined resource and compare the values against the exported policies.  If the values on the system do not match
+The `local_security_policy` module works by using `secedit /export` to export a list of currently set policies.  The module will then
+take the user defined resources and compare the values against the exported policies.  If the values on the system do not match
 the defined resource, the module will run `secedit /configure` to configure the policy on the system.  If the policy already
 exists on the system no change will be made.
 
