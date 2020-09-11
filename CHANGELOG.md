@@ -1,3 +1,8 @@
+## [0.7.2] - 2020-09-11
+### Added
+- Support for local or domain group lookup
+- Support for policy specification via hiera
+
 ## [0.7.1] - 2020-07-08
 ### Changed
 - invalid metadata tags removed
