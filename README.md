@@ -63,7 +63,7 @@ Example User Rights Policy
 ```
 local_security_policy { 'Allow log on locally':
   ensure => present,
-  policy_value => '90',
+  policy_value => 'Administrators',
 }
 ```
 Example Security Settings
@@ -225,29 +225,12 @@ take the user defined resources and compare the values against the exported poli
 the defined resource, the module will run `secedit /configure` to configure the policy on the system.  If the policy already
 exists on the system no change will be made.
 
-In order to make setting these polices easier, this module has extracted some of the difficult to lookup or remember pieces
-of a policy and placed them in a map for easy translation and value conversion.  This means that you only need to remember the user or group name
-instead of the SID value, as well as the policy description instead of the special key that needs to be set.  The mappings
-below define how this translation works.  If there is no map for your policy you will need to add to `lib/puppet_x/lsp/security_policy.rb`
+In order to make setting these polices easier, this module uses the policy description from the Local Security Policy
+management console and translates that into the appropriate entries in the file used by `secedit /configure`.  Similarly, the module is
+able to translate user and group names into the SID and name values that are used by User Rights Assignment policies.
 
-```
-'Accounts: Rename administrator account' => {
-                :name => 'NewAdministratorName',
-                :policy_type => 'System Access',
-                :data_type => :quoted_string
-            },
- 'Recovery console: Allow floppy copy and access to all drives and all folders' => {
-                :name => 'MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Setup\RecoveryConsole\SetCommand',
-                :reg_type => '4',
-                :policy_type => 'Registry Values',
-            },
-```
-
-The key `Accounts: Rename administrator account ` in the first hash is what the user will define as the name in the resource name.
-Instead of remembering the policy name, the description will help us remember what the policy is for.  When defining new policy
-maps you will need to define the key, name, `policy_type`, and optionally, `data_type` or `reg_type`.
-
-Currently for `data_type` there is only `:quoted_string`.  However, for `reg_type` (integer value) there are many values which are listed below:
+New policy maps require values for the key, name, and policy_type. Policies that require user and group conversion to SID values require `data_type: :principal` to perform the translation.  Policies that require the value to be enclosed in double-quotes require `data_type: :quoted_string`. Policies that modify registry values also require a value for `reg_type`. 
+The following `reg_type` values are supported:
 
 ```
     REG_NONE 0
@@ -265,6 +248,66 @@ Currently for `data_type` there is only `:quoted_string`.  However, for `reg_typ
     REG_QWORD 11
     REG_QWORD_LITTLE_ENDIAN 11
 ```
+Here are examples of working policy definitions from lib\puppet_x\lsp\security_policy.rb: 
+
+```
+'Accounts: Rename administrator account' => {
+                name: 'NewAdministratorName',
+                policy_type: 'System Access',
+                data_type: :quoted_string
+            },
+ 'Recovery console: Allow floppy copy and access to all drives and all folders' => {
+                name: 'MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Setup\RecoveryConsole\SetCommand',
+                reg_type: '4',
+                policy_type: 'Registry Values',
+            },
+  'Allow log on locally' => {
+                name: 'SeInteractiveLogonRight',
+                policy_type: 'Privilege Rights',
+                data_type: :principal,
+      },
+```
+
+In the first example above, the key `Accounts: Rename administrator account ` is what the user will define as the 'name' in the resource.  In the policy definitions included in the module, this is the name shown in the Local Security Policy management console.  It is recommended to make this something descriptive and easy to remember, or a description pulled from the Operating System.
+The name `'NewAdministratorName'` is the key used in the import file used by `secedit /configure`.
+The policy_type `'System Access'` is the section name in the import file used by `secedit /configure`.
+The data_type `':quoted_string'` indicates that this value must be enclosed in double-quotes in the import file used by `secedit /configure`.
+
+To modify these settings, you would define the following resources in your Puppet configuration:
+
+```
+local_security_policy { 'Accounts: Rename administrator account':
+  ensure => present,
+  policy_value => 'MyAdminAccount',
+}
+
+local_security_policy { 'Recovery console: Allow floppy copy and access to all drives and all folders':
+  ensure => present,
+  policy_value => '0',
+}
+
+local_security_policy { 'Allow log on locally':
+  ensure => present,
+  policy_value => 'Administrators',
+}
+```
+Assuming all of the desired values are different than what is currently set in the OS, this would result in the following INI file, which would be imported by `secedit /configure`:
+
+```
+[Unicode]
+Unicode=yes
+[System Access]
+NewAdministratorName = "MyAdminAccount"
+[Registry Values]
+MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Setup\RecoveryConsole\SetCommand=4,0
+[Privilege Rights]
+SeInteractiveLogonRight = *S-1-5-32-544
+[Version]
+signature="$CHICAGO$"
+Revision=1
+
+```
+
 ## Commands Used
 
 ## TODO: Future release
