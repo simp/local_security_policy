@@ -914,12 +914,12 @@ class SecurityPolicy
         policy_type: 'Registry Values',
         reg_type: '4',
       },
-      'Interactive logon: Don\'t display last signed-in' => {
+      "Interactive logon: Don't display last signed-in" => {
         name: 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\DontDisplayLastUserName',
         reg_type: '4',
         policy_type: 'Registry Values',
       },
-      'Interactive logon: Don\'t display username at sign-in' => {
+      "Interactive logon: Don't display username at sign-in" => {
         name: 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\DontDisplayUserName',
         reg_type: '4',
         policy_type: 'Registry Values',
