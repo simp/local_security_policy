@@ -111,6 +111,8 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
       Create global objects
       Create permanent shared objects
       Create symbolic links
+      DCOM: Machine Access Restrictions in Security Descriptor Definition Language (SDDL) syntax
+      DCOM: Machine Launch Restrictions in Security Descriptor Definition Language (SDDL) syntax
       Debug programs
       Deny access to this computer from the network
       Deny log on as a batch job
@@ -138,6 +140,8 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
       Increase scheduling priority
       Interactive logon: Display user information when the session is locked
       Interactive logon: Do not display last user name
+      Interactive logon: Don't display last signed-in
+      Interactive logon: Don't display username at sign-in
       Interactive logon: Do not require CTRL+ALT+DEL
       Interactive logon: Machine account lockout threshold
       Interactive logon: Machine inactivity limit
@@ -146,6 +150,7 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
       Interactive logon: Number of previous logons to cache (in case domain controller is not available)
       Interactive logon: Prompt user to change password before expiration
       Interactive logon: Require Domain Controller authentication to unlock workstation
+      Interactive logon: Require Windows Hello for Business or smart card
       Interactive logon: Require smart card
       Interactive logon: Smart card removal behavior
       Load and unload device drivers
@@ -158,6 +163,7 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
       Microsoft network client: Digitally sign communications (if server agrees)
       Microsoft network client: Send unencrypted password to third-party SMB servers
       Microsoft network server: Amount of idle time required before suspending session
+      Microsoft network server: Attempt S4U2Self to obtain claim information
       Microsoft network server: Digitally sign communications (always)
       Microsoft network server: Digitally sign communications (if client agrees)
       Microsoft network server: Disconnect clients when logon hours expire
@@ -175,15 +181,25 @@ local_security_policy { 'System cryptography: Use FIPS compiant algorithms for e
       Network access: Remotely accessible registry paths
       Network access: Remotely accessible registry paths and sub-paths
       Network access: Restrict anonymous access to Named Pipes and Shares
+      Network access: Restrict clients allowed to make remote calls to SAM
       Network access: Shares that can be accessed anonymously
       Network access: Sharing and security model for local accounts
       Network security: All Local System to use computer identity for NTLM
+      Network security: Allow LocalSystem NULL session fallback
+      Network security: Allow PKU2U authentication requests to this computer to use online identities
       Network security: Do not store LAN Manager hash value on next password change
       Network security: Force logoff when logon hours expire
       Network security: LAN Manager authentication level
       Network security: LDAP client signing requirements
       Network security: Minimum session security for NTLM SSP based (including secure RPC) clients
       Network security: Minimum session security for NTLM SSP based (including secure RPC) servers
+      Network security: Restrict NTLM: Add remote server exceptions for NTLM authentication
+      Network security: Restrict NTLM: Add server exceptions in this domain
+      Network security: Restrict NTLM: Audit Incoming NTLM Traffic
+      Network security: Restrict NTLM: Audit NTLM authentication in this domain
+      Network security: Restrict NTLM: Incoming NTLM traffic
+      Network security: Restrict NTLM: NTLM authentication in this domain
+      Network security: Restrict NTLM: Outgoing NTLM traffic to remote servers
       Password must meet complexity requirements
       Perform volume maintenance tasks
       Profile single process

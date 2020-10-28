@@ -849,7 +849,86 @@ class SecurityPolicy
         policy_type: 'Registry Values',
         reg_type: '4',
       },
-
+      'DCOM: Machine Access Restrictions in Security Descriptor Definition Language (SDDL) syntax' => {
+        name: 'MACHINE\Software\Policies\Microsoft\Windows NT\DCOM\MachineAccessRestriction',
+        policy_type: 'Registry Values',
+        reg_type: '1',
+      },
+      'DCOM: Machine Launch Restrictions in Security Descriptor Definition Language (SDDL) syntax' => {
+        name: 'MACHINE\Software\Policies\Microsoft\Windows NT\DCOM\MachineLaunchRestriction',
+        policy_type: 'Registry Values',
+        reg_type: '1',
+      },
+      'Microsoft network server: Attempt S4U2Self to obtain claim information' => {
+        name: 'MACHINE\System\CurrentControlSet\Services\LanManServer\Parameters\EnableS4U2SelfForClaims',
+        policy_type: 'Registry Values',
+        reg_type: '4',
+      },
+      'Network access: Restrict clients allowed to make remote calls to SAM' => {
+        name: 'MACHINE\System\CurrentControlSet\Control\Lsa\RestrictRemoteSAM',
+        policy_type: 'Registry Values',
+        reg_type: '1',
+      },
+      'Network security: Allow LocalSystem NULL session fallback' => {
+        name: 'MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0\allownullsessionfallback',
+        policy_type: 'Registry Values',
+        reg_type: '4',
+      },
+      'Network security: Allow PKU2U authentication requests to this computer to use online identities' => {
+        name: 'MACHINE\System\CurrentControlSet\Control\Lsa\pku2u\AllowOnlineID',
+        policy_type: 'Registry Values',
+        reg_type: '4',
+      },
+      'Network security: Restrict NTLM: Add remote server exceptions for NTLM authentication' => {
+        name: 'MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0\ClientAllowedNTLMServers',
+        policy_type: 'Registry Values',
+        reg_type: '7',
+      },
+      'Network security: Restrict NTLM: Add server exceptions in this domain' => {
+        name: 'MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters\DCAllowedNTLMServers',
+        policy_type: 'Registry Values',
+        reg_type: '7',
+      },
+      'Network security: Restrict NTLM: Audit Incoming NTLM Traffic' => {
+        name: 'MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0\AuditReceivingNTLMTraffic',
+        policy_type: 'Registry Values',
+        reg_type: '4',
+      },
+      'Network security: Restrict NTLM: Audit NTLM authentication in this domain' => {
+        name: 'MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters\AuditNTLMInDomain',
+        policy_type: 'Registry Values',
+        reg_type: '4',
+      },
+      'Network security: Restrict NTLM: Incoming NTLM traffic' => {
+        name: 'MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0\RestrictReceivingNTLMTraffic',
+        policy_type: 'Registry Values',
+        reg_type: '4',
+      },
+      'Network security: Restrict NTLM: NTLM authentication in this domain' => {
+        name: 'MACHINE\System\CurrentControlSet\Services\Netlogon\Parameters\RestrictNTLMInDomain',
+        policy_type: 'Registry Values',
+        reg_type: '4',
+      },
+      'Network security: Restrict NTLM: Outgoing NTLM traffic to remote servers' => {
+        name: 'MACHINE\System\CurrentControlSet\Control\Lsa\MSV1_0\RestrictSendingNTLMTraffic',
+        policy_type: 'Registry Values',
+        reg_type: '4',
+      },
+      "Interactive logon: Don't display last signed-in" => {
+        name: 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\DontDisplayLastUserName',
+        reg_type: '4',
+        policy_type: 'Registry Values',
+      },
+      "Interactive logon: Don't display username at sign-in" => {
+        name: 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\DontDisplayUserName',
+        reg_type: '4',
+        policy_type: 'Registry Values',
+      },
+      'Interactive logon: Require Windows Hello for Business or smart card' => {
+        name: 'MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System\ScForceOption',
+        reg_type: '4',
+        policy_type: 'Registry Values',
+      },
     }
   end
 end
